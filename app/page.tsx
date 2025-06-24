@@ -1,103 +1,312 @@
-import Image from "next/image";
+'use client';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { useEffect, useState } from 'react';
+import AirbnbIconsGrid from '../components/ui/AirbnbIconsGrid';
+
+const COLOR_GROUPS = [
+  {
+    title: 'Shades',
+    description: 'Colors used for backgrounds, text, dividers, etc.',
+    prefix: '--color-shade-',
+    tokens: [
+      '01', '02', '02-5', '02-30', '02-50'
+    ],
+  },
+  {
+    title: 'Neutrals',
+    description: 'Colors used for backgrounds, text, dividers, etc.',
+    prefix: '--color-neutral-',
+    tokens: [
+      '01', '02', '03', '04', '05', '06', '07', '08'
+    ],
+  },
+  {
+    title: 'Primary',
+    description: 'Colors used for logos and icons',
+    prefix: '--color-primary-',
+    tokens: ['01', '02'],
+  },
+  {
+    title: 'Gradients',
+    description: 'Colors used for different primary button states',
+    prefix: '--color-gradient-',
+    tokens: ['01', '02', '03'],
+  },
+  {
+    title: 'Error',
+    description: 'Colored used for background and text of errors',
+    prefix: '--color-error-',
+    tokens: ['01', '02'],
+  },
+  {
+    title: 'Accents',
+    description: 'Colors used for icons, discounts, links.',
+    prefix: '--color-',
+    tokens: ['accent-01', 'accent-02', 'discount', 'link'],
+  },
+];
+
+function getCssVarValue(variable: string) {
+  if (typeof window === 'undefined') return '';
+  return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+}
+
+function ColorGroup({ title, description, tokens }: { title: string, description: string, tokens: { name: string, value: string, isGradient?: boolean }[] }) {
+  return (
+    <div className="p-6 flex flex-col gap-4 min-h-[260px] border rounded-xl bg-white">
+      <h3 className="text-xl font-bold mb-1">{title}</h3>
+      <p className="text-xs text-neutral-07 mb-2">{description}</p>
+      <div className="flex flex-col gap-3">
+        {tokens.map((token) => (
+          <div key={token.name} className="flex items-center gap-3">
+            <div
+              className={`w-10 h-10 rounded border border-neutral-03 flex-shrink-0`}
+              style={token.isGradient ? { background: token.value } : { backgroundColor: token.value }}
+            />
+            <div className="flex flex-col">
+              <span className="text-sm text-neutral-08">{token.name}</span>
+              <span className="text-xs text-neutral-06">{token.value}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type ColorToken = { name: string; value: string; isGradient?: boolean };
+type ColorGroup = { title: string; description: string; tokens: ColorToken[] };
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [groups, setGroups] = useState<ColorGroup[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const allGroups = COLOR_GROUPS.map(group => {
+      const tokens = group.tokens.map(token => {
+        const varName = group.prefix + token;
+        const value = getCssVarValue(varName);
+        return {
+          name: varName.replace('--color-', ''),
+          value,
+          isGradient: value.startsWith('linear-gradient'),
+        };
+      });
+      return { ...group, tokens };
+    });
+    setGroups(allGroups);
+  }, []);
+
+  return (
+    <main className="min-h-screen p-8 bg-neutral-01">
+      {/* Header Section */}
+      <section className="mb-12">
+        <h1 className="text-6xl font-bold text-shade-02 mb-4 font-circular">
+          Airbnb Design System
+        </h1>
+        <p className="text-xl text-neutral-07 font-circular-book">
+          Demonstração dos tokens de design system configurados baseados no Airbnb UI Kit
+        </p>
+      </section>
+
+      {/* Typography Section */}
+      <section className="mb-16">
+        <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Typography</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card variant="elevated" padding="lg">
+            <CardHeader>
+              <CardTitle>Font Sizes</CardTitle>
+              <CardDescription>Escala tipográfica do Airbnb</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="text-xs">text-xs - 12px/16px</div>
+              <div className="text-sm">text-sm - 14px/18px</div>
+              <div className="text-base">text-base - 16px/20px</div>
+              <div className="text-lg">text-lg - 18px/22px</div>
+              <div className="text-xl">text-xl - 20px/24px</div>
+              <div className="text-2xl">text-2xl - 22px/26px</div>
+              <div className="text-3xl">text-3xl - 24px/28px</div>
+              <div className="text-4xl">text-4xl - 26px/30px</div>
+              <div className="text-5xl">text-5xl - 32px/36px</div>
+              <div className="text-6xl">text-6xl - 40px/44px</div>
+            </CardContent>
+          </Card>
+
+          <Card variant="elevated" padding="lg">
+            <CardHeader>
+              <CardTitle>Font Weights</CardTitle>
+              <CardDescription>Pesos da fonte Circular</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="font-book">font-book - 400</div>
+              <div className="font-medium">font-medium - 500</div>
+              <div className="font-semibold">font-semibold - 600</div>
+              <div className="font-bold">font-bold - 700</div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      {/* Color Palette */}
+      <section className="mb-16">
+        <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Color Palette</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {groups.slice(0, 3).map(group => (
+            <ColorGroup key={group.title} title={group.title} description={group.description} tokens={group.tokens} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {groups.slice(3).map(group => (
+            <ColorGroup key={group.title} title={group.title} description={group.description} tokens={group.tokens} />
+          ))}
+        </div>
+      </section>
+
+       {/* Elevation Section */}
+      <section className="flex flex-col items-center justify-center min-h-[60vh] bg-neutral-02 py-12">
+        <div className="flex gap-16 mb-6">
+          <div className="flex flex-col items-center">
+            <div className="w-40 h-40 bg-white shadow-airbnb-01 rounded-lg"></div>
+            <span className="mt-3 text-sm text-neutral-07">Elevation 01</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-40 h-40 bg-white shadow-airbnb-02 rounded-lg"></div>
+            <span className="mt-3 text-sm text-neutral-07">Elevation 02</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-40 h-40 bg-white shadow-airbnb-03 rounded-lg"></div>
+            <span className="mt-3 text-sm text-neutral-07">Elevation 03</span>
+          </div>
+        </div>
+        <span className="text-base text-neutral-08 font-medium">Airbnb Elevations (Figma)</span>
+      </section>
+
+      {/* Components Section */}
+      <section className="mb-16">
+        <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Components</h2>
+    
+        {/* Inputs */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-semibold text-shade-02 mb-6">Inputs</h3>
+          <Card variant="elevated" padding="lg">
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Default Input</label>
+                  <Input placeholder="Enter your text..." />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Error Input</label>
+                  <Input placeholder="Error state" error />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Success Input</label>
+                  <Input placeholder="Success state" success />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Disabled Input</label>
+                  <Input placeholder="Disabled" disabled />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Small</label>
+                  <Input placeholder="Small input" inputSize="sm" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Medium</label>
+                  <Input placeholder="Medium input" inputSize="md" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-shade-02">Large</label>
+                  <Input placeholder="Large input" inputSize="lg" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Cards */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-semibold text-shade-02 mb-6">Cards</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card variant="default">
+              <CardHeader>
+                <CardTitle>Default Card</CardTitle>
+                <CardDescription>Default variant with border</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-neutral-07">This is a default card with neutral styling.</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="primary" size="sm">Action</Button>
+              </CardFooter>
+            </Card>
+
+            <Card variant="elevated">
+              <CardHeader>
+                <CardTitle>Elevated Card</CardTitle>
+                <CardDescription>Medium elevation shadow</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-neutral-07">This card has a medium elevation shadow.</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="secondary" size="sm">Action</Button>
+              </CardFooter>
+            </Card>
+
+            <Card variant="elevatedLarge">
+              <CardHeader>
+                <CardTitle>Large Elevated</CardTitle>
+                <CardDescription>Large elevation shadow</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-neutral-07">This card has a large elevation shadow.</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="gradient" size="sm">Action</Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+
+        {/* Airbnb Icons Showcase */}
+        <section className="mb-16">
+          <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Airbnb Icons</h2>
+          <AirbnbIconsGrid />
+        </section>
+
+        {/* Airbnb Buttons Showcase 
+        <section className="mb-16">
+          <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Airbnb Buttons</h2>
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-lg font-bold mb-2">Primary</h3>
+              <Button variant="primary" size="md">Primary</Button>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2">Secondary</h3>
+              <Button variant="secondary" size="md">Secondary</Button>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2">Tertiary</h3>
+              <Button variant="tertiary" size="md">Tertiary</Button>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2">Link</h3>
+              <Button variant="link" size="md">Link</Button>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-2">Com ícone</h3>
+              <Button variant="primary" size="md" iconLeft={<NeonIconLaurelIcon />}>Favorito</Button>
+            </div>
+          </div>
+        </section>*/}
+      </section>
+
+    </main>
   );
 }

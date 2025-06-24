@@ -1,26 +1,141 @@
 @import "tailwindcss";
 
+/* SF Pro (Apple) - system font, não precisa importar se for Mac/iOS */
+@font-face {
+  font-family: 'SF Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('SF Pro Display'), local('SF Pro'), local('SFPro'), local('SF Pro Text');
+}
+
+/* Airbnb Cereal VF - Google Fonts (usando Inter como fallback, pois Cereal não é open source) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+/* Circular - Google Fonts (usando Nunito como fallback, pois Circular não é open source) */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Shades */
+  --color-shade-01: #FFFFFF;
+  --color-shade-02: #222222;
+  --color-shade-02-5: rgba(34,34,34,0.05);
+  --color-shade-02-30: rgba(34,34,34,0.3);
+  --color-shade-02-50: rgba(34,34,34,0.5);
+
+  /* Neutrals */
+  --color-neutral-01: #F7F7F7;
+  --color-neutral-02: #EBEBEB;
+  --color-neutral-03: #DDDDDD;
+  --color-neutral-04: #D3D3D3;
+  --color-neutral-05: #C2C2C2;
+  --color-neutral-06: #B0B0B0;
+  --color-neutral-07: #717171;
+  --color-neutral-08: #5E5E5E;
+
+  /* Primary */
+  --color-primary-01: #F6475F;
+  --color-primary-02: #FF385C;
+
+  /* Gradients */
+  --color-gradient-01: linear-gradient(135deg, #F6475F 0%, #FF385C 100%);
+  --color-gradient-02: linear-gradient(135deg, #FF385C 0%, #F6475F 100%);
+  --color-gradient-03: linear-gradient(135deg, #F6475F 0%, #FF385C 50%, #F6475F 100%);
+
+  /* Error */
+  --color-error-01: #FEF8F6;
+  --color-error-02: #C13515;
+
+  /* Accents */
+  --color-accent-01: #F6D7DF;
+  --color-accent-02: #D03660;
+  --color-discount: #008A05;
+  --color-link: #004CC4;
+
+  /* Default colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Typography */
+  --font-sans: 'SF Pro', 'Airbnb Cereal VF', 'Inter', 'Circular', 'Nunito', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-shade-01: var(--color-shade-01);
+  --color-shade-02: var(--color-shade-02);
+  --color-shade-02-5: var(--color-shade-02-5);
+  --color-shade-02-30: var(--color-shade-02-30);
+  --color-shade-02-50: var(--color-shade-02-50);
+
+  --color-neutral-01: var(--color-neutral-01);
+  --color-neutral-02: var(--color-neutral-02);
+  --color-neutral-03: var(--color-neutral-03);
+  --color-neutral-04: var(--color-neutral-04);
+  --color-neutral-05: var(--color-neutral-05);
+  --color-neutral-06: var(--color-neutral-06);
+  --color-neutral-07: var(--color-neutral-07);
+  --color-neutral-08: var(--color-neutral-08);
+
+  --color-primary-01: var(--color-primary-01);
+  --color-primary-02: var(--color-primary-02);
+
+  --color-gradient-01: var(--color-gradient-01);
+  --color-gradient-02: var(--color-gradient-02);
+  --color-gradient-03: var(--color-gradient-03);
+
+  --color-error-01: var(--color-error-01);
+  --color-error-02: var(--color-error-02);
+
+  --color-accent-01: var(--color-accent-01);
+  --color-accent-02: var(--color-accent-02);
+  --color-discount: var(--color-discount);
+  --color-link: var(--color-link);
+
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Box Shadows */
+  --shadow-airbnb-01: 0 4px 18px 0 rgba(0,0,0,0.17);
+  --shadow-airbnb-02: 0 1px 5px 0 rgba(0,0,0,0.19);
+  --shadow-airbnb-03: 0 8px 16px 0 rgba(0,0,0,0.12);
+  --shadow-airbnb-md: 0 1px 5px 0 rgba(0,0,0,0.19);
+  --shadow-airbnb-lg: 0 8px 16px 0 rgba(0,0,0,0.12);
+  --shadow-airbnb-xl: 0 4px 18px 0 rgba(0,0,0,0.17);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #0a0a0a;
+    --background: #ededed;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Airbnb specific utility classes */
+.airbnb-shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.airbnb-shadow-md {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.airbnb-shadow-lg {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+}
+
+.airbnb-shadow-xl {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.20);
 }
