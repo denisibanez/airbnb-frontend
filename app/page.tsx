@@ -1,10 +1,12 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
+
 import { useEffect, useState } from 'react';
 import AirbnbIconsGrid from '../components/ui/AirbnbIconsGrid';
 import { IconsOutlineAirbnb, IconsOutlineDarkAirbnb } from '@/components/ui/Icons';
+import { SearchIcon } from '@/components/ui/IconCustomized/IconCustomized';
+import TextField from '@/components/ui/TextField';
 
 const COLOR_GROUPS = [
   {
@@ -190,47 +192,8 @@ export default function Home() {
       <section className="mb-16">
         <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Components</h2>
     
-        {/* Inputs */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-semibold text-shade-02 mb-6">Inputs</h3>
-          <Card variant="elevated" padding="lg">
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Default Input</label>
-                  <Input placeholder="Enter your text..." />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Error Input</label>
-                  <Input placeholder="Error state" error />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Success Input</label>
-                  <Input placeholder="Success state" success />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Disabled Input</label>
-                  <Input placeholder="Disabled" disabled />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Small</label>
-                  <Input placeholder="Small input" inputSize="sm" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Medium</label>
-                  <Input placeholder="Medium input" inputSize="md" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-shade-02">Large</label>
-                  <Input placeholder="Large input" inputSize="lg" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+
+
 
         {/* Cards */}
         <div className="mb-12">
@@ -338,6 +301,39 @@ export default function Home() {
           <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Airbnb Icons</h2>
           <AirbnbIconsGrid />
         </section>
+
+        {/* Inputs */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-semibold text-shade-02 mb-6">Inputs</h3>
+          <Card variant="elevated" padding="lg">
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Default */}
+                <TextField label="Default" placeholder="Placeholder text" iconRight={<SearchIcon className="w-6 h-6 text-neutral-07" />} />
+                {/* Helper */}
+                <TextField label="With Helper" placeholder="Placeholder text" helperText="Optional helper text" />
+                {/* Error */}
+                <TextField label="With Error" placeholder="Placeholder text" errorText="Error message" />
+                {/* Error + Helper */}
+                <TextField label="Error + Helper" placeholder="Placeholder text" errorText="Error message" helperText="Optional helper text" />
+                {/* With Icon */}
+                <TextField label="With Icon" placeholder="Placeholder text" rightIcon={<IconsOutlineAirbnb className="w-5 h-5" />} />
+                {/* Disabled */}
+                <TextField label="Disabled" placeholder="Placeholder text" disabled />
+                {/* Required */}
+                <TextField label="Required" placeholder="Placeholder text" required />
+                {/* Filled */}
+                <TextField label="Filled" defaultValue="Filling the input with real text" />
+                {/* Small */}
+                <TextField label="Small" placeholder="Small input" inputSize="sm" />
+                {/* Medium */}
+                <TextField label="Medium" placeholder="Medium input" inputSize="md" />
+                {/* Large */}
+                <TextField label="Large" placeholder="Large input" inputSize="lg" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </section>
 
     </main>
