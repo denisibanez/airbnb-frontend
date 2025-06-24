@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsneonPortableFans = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsNeonPortableFans = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -24,4 +24,4 @@ const SvgIconsneonPortableFans = (props: SVGProps<SVGSVGElement>) => (
     <path fill="#FF385C" d="M7 20.25v1.5h10v-1.5z" />
   </svg>
 );
-export default SvgIconsneonPortableFans;
+export default SvgIconsNeonPortableFans;

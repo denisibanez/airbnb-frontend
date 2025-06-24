@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsoutlineOffTheGrid = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsOutlineOffTheGrid = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -23,4 +23,4 @@ const SvgIconsoutlineOffTheGrid = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsoutlineOffTheGrid;
+export default SvgIconsOutlineOffTheGrid;

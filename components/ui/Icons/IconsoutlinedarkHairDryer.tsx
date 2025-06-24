@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsoutlinedarkHairDryer = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsOutlineDarkHairDryer = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -23,4 +23,4 @@ const SvgIconsoutlinedarkHairDryer = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsoutlinedarkHairDryer;
+export default SvgIconsOutlineDarkHairDryer;

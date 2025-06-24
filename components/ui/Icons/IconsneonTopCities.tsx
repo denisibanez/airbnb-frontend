@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsneonTopCities = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsNeonTopCities = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -18,4 +18,4 @@ const SvgIconsneonTopCities = (props: SVGProps<SVGSVGElement>) => (
     <path fill="#FF385C" d="M2 20.5h20V22H2z" />
   </svg>
 );
-export default SvgIconsneonTopCities;
+export default SvgIconsNeonTopCities;

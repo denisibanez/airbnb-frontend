@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsoutlinedarkKettle = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsOutlineDarkKettle = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -22,4 +22,4 @@ const SvgIconsoutlinedarkKettle = (props: SVGProps<SVGSVGElement>) => (
     <path fill="#fff" d="M19 21.75v-1.5H5v1.5z" />
   </svg>
 );
-export default SvgIconsoutlinedarkKettle;
+export default SvgIconsOutlineDarkKettle;

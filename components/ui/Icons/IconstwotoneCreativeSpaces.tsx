@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconstwotoneCreativeSpaces = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsTwoToneCreativeSpaces = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -30,4 +30,4 @@ const SvgIconstwotoneCreativeSpaces = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconstwotoneCreativeSpaces;
+export default SvgIconsTwoToneCreativeSpaces;

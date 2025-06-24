@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsneonWindmills = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsNeonWindmills = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -11,7 +11,7 @@ const SvgIconsneonWindmills = (props: SVGProps<SVGSVGElement>) => (
   >
     <g
       fillRule="evenodd"
-      clipPath="url(#IconsneonWindmills_svg__a)"
+      clipPath="url(#IconsNeonWindmills_svg__a)"
       clipRule="evenodd"
     >
       <path
@@ -24,10 +24,10 @@ const SvgIconsneonWindmills = (props: SVGProps<SVGSVGElement>) => (
       />
     </g>
     <defs>
-      <clipPath id="IconsneonWindmills_svg__a">
+      <clipPath id="IconsNeonWindmills_svg__a">
         <path fill="#fff" d="M0 0h24v24H0z" />
       </clipPath>
     </defs>
   </svg>
 );
-export default SvgIconsneonWindmills;
+export default SvgIconsNeonWindmills;

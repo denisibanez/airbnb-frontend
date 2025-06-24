@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsoutlineDropoff = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsOutlineDropoff = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -22,4 +22,4 @@ const SvgIconsoutlineDropoff = (props: SVGProps<SVGSVGElement>) => (
     <path fill="#131313" d="M2.5 21.5h19V20h-19z" />
   </svg>
 );
-export default SvgIconsoutlineDropoff;
+export default SvgIconsOutlineDropoff;

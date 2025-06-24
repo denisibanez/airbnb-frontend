@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconstwotonedarkDedicatedWorkspace = (
+const SvgIconsTwoToneDarkDedicatedWorkspace = (
   props: SVGProps<SVGSVGElement>
 ) => (
   <svg
@@ -24,4 +24,4 @@ const SvgIconstwotonedarkDedicatedWorkspace = (
     />
   </svg>
 );
-export default SvgIconstwotonedarkDedicatedWorkspace;
+export default SvgIconsTwoToneDarkDedicatedWorkspace;

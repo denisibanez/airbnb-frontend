@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsoutlineMicrowave = (props: SVGProps<SVGSVGElement>) => (
+const SvgIconsOutlineMicrowave = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -27,4 +27,4 @@ const SvgIconsoutlineMicrowave = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsoutlineMicrowave;
+export default SvgIconsOutlineMicrowave;
