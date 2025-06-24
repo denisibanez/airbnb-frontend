@@ -1,5 +1,6 @@
 import * as Icons from './Icons';
 import React from 'react';
+import { AirbnbLogoIcon, SearchIcon, GlobeIcon, UserMenuIcon, MenuIcon, FilterIcon } from './IconCustomized/IconCustomized';
 
 const iconNames = Object.keys(Icons);
 
@@ -30,13 +31,6 @@ iconNames.forEach((name) => {
 const groupOrder = [
   'Neon', 'NeonDark', 'Outline', 'OutlineDark', 'TwoTone', 'TwoToneDark', 'General', 'Interface', 'Social', ''
 ];
-
-// Função para agrupar por subcategoria (prefixo até a primeira letra minúscula após maiúscula)
-function getSubcategory(name: string) {
-  // Exemplo: 'GeneralClockAlarm' => 'General', 'InterfaceAddAlt' => 'Interface', 'MyCustomIcon' => 'MyCustom'
-  const match = name.match(/^[A-Z][a-z]+/);
-  return match ? match[0] : 'Outros';
-}
 
 export default function AirbnbIconsGrid() {
   return (
@@ -71,6 +65,19 @@ export default function AirbnbIconsGrid() {
           </div>
         );
       })}
+      {/* Custom Icons Section */}
+      <div className="p-6 rounded-xl border bg-white border-neutral-200">
+        <h3 className="text-xl font-bold mb-6 text-shade-02">Custom Icons</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-8">
+          <div className="flex flex-col items-center"><AirbnbLogoIcon className="w-10 h-10 text-primary-01" /><span className="mt-2 text-xs break-all text-center text-neutral-500">AirbnbLogoIcon</span></div>
+          <div className="flex flex-col items-center"><SearchIcon className="w-10 h-10 text-neutral-07" /><span className="mt-2 text-xs break-all text-center text-neutral-500">SearchIcon</span></div>
+          <div className="flex flex-col items-center"><GlobeIcon className="w-10 h-10 text-neutral-07" /><span className="mt-2 text-xs break-all text-center text-neutral-500">GlobeIcon</span></div>
+          <div className="flex flex-col items-center"><UserMenuIcon className="w-10 h-10 text-neutral-07" /><span className="mt-2 text-xs break-all text-center text-neutral-500">UserMenuIcon</span></div>
+          <div className="flex flex-col items-center"><MenuIcon className="w-10 h-10 text-neutral-07" /><span className="mt-2 text-xs break-all text-center text-neutral-500">MenuIcon</span></div>
+          <div className="flex flex-col items-center"><FilterIcon className="w-10 h-10 text-neutral-07" /><span className="mt-2 text-xs break-all text-center text-neutral-500">FilterIcon</span></div>
+         
+        </div>
+      </div>
     </div>
   );
 }

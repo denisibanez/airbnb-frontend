@@ -145,12 +145,21 @@ function processSvgFiles() {
       execSync(cmd.join(' '), { stdio: 'inherit' });
     }
     console.log('✅ Componentes React gerados com sucesso!');
-    // Cria arquivo index.ts manualmente
+    // Cria arquivo index.tsx manualmente
+    const indexPath = path.join(iconsDir, 'index.tsx');
+    let customIconsBlock = '';
+    if (fs.existsSync(indexPath)) {
+      const oldContent = fs.readFileSync(indexPath, 'utf8');
+      const match = oldContent.match(/\/\/ --- CUSTOM ICONS: NÃO REMOVER, NÃO ALTERAR VIA SCRIPT ---[\s\S]*?\/\/ --- FIM DOS CUSTOM ICONS ---/);
+      if (match) {
+        customIconsBlock = '\n' + match[0] + '\n';
+      }
+    }
     const indexContent = processedFiles
       .map(({ camelName }) => `export { default as ${camelName} } from './${camelName}';`)
       .join('\n');
-    fs.writeFileSync(path.join(iconsDir, 'index.ts'), indexContent);
-    console.log('📄 Arquivo index.ts criado manualmente');
+    fs.writeFileSync(indexPath, indexContent + customIconsBlock);
+    console.log('📄 Arquivo index.tsx criado manualmente (custom icons preservados)');
     const generatedComponents = fs.readdirSync(iconsDir).filter(file => file.endsWith('.tsx'));
     console.log(`📦 ${generatedComponents.length} componentes gerados em ${iconsDir}`);
   } catch (error) {

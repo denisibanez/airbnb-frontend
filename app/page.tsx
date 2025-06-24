@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/Input';
 import { useEffect, useState } from 'react';
 import AirbnbIconsGrid from '../components/ui/AirbnbIconsGrid';
+import { IconsOutlineAirbnb, IconsOutlineDarkAirbnb } from '@/components/ui/Icons';
 
 const COLOR_GROUPS = [
   {
@@ -78,6 +79,9 @@ function ColorGroup({ title, description, tokens }: { title: string, description
 
 type ColorToken = { name: string; value: string; isGradient?: boolean };
 type ColorGroup = { title: string; description: string; tokens: ColorToken[] };
+
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'link' | 'error';
+type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export default function Home() {
   const [groups, setGroups] = useState<ColorGroup[]>([]);
@@ -267,10 +271,66 @@ export default function Home() {
                 <p className="text-neutral-07">This card has a large elevation shadow.</p>
               </CardContent>
               <CardFooter>
-                <Button variant="gradient" size="sm">Action</Button>
+                <Button variant="primary" size="sm">Action</Button>
               </CardFooter>
             </Card>
           </div>
+        </div>
+
+        {/* Buttons Showcase */}
+        <div className="mb-16">
+          <h3 className="text-2xl font-semibold text-shade-02 mb-6">Buttons</h3>
+          {(() => {
+            const variants = [
+              'primary',
+              'secondary',
+              'tertiary',
+              'outline',
+              'ghost',
+              'link',
+              'error',
+            ] as const;
+            const sizes = ['sm', 'md', 'lg', 'xl'] as const;
+            const statuses = [
+              { key: 'default', label: 'Default', render: (variant: ButtonVariant, size: ButtonSize) => <Button variant={variant} size={size}>{variant} {size}</Button> },
+              { key: 'loading', label: 'Loading', render: (variant: ButtonVariant, size: ButtonSize) => <Button variant={variant} size={size} loading /> },
+              { key: 'disabled', label: 'Disabled', render: (variant: ButtonVariant, size: ButtonSize) => <Button variant={variant} size={size} disabled>Disabled</Button> },
+              { key: 'iconLeft', label: 'Icon Left', render: (variant: ButtonVariant, size: ButtonSize) => <Button variant={variant} size={size} iconLeft={variant === 'primary' ? <IconsOutlineDarkAirbnb /> : ['secondary','error'].includes(variant) ? <IconsOutlineDarkAirbnb /> : <IconsOutlineAirbnb />}>Icon Left</Button> },
+              { key: 'iconRight', label: 'Icon Right', render: (variant: ButtonVariant, size: ButtonSize) => <Button variant={variant} size={size} iconRight={variant === 'primary' ? <IconsOutlineDarkAirbnb /> : ['secondary','error'].includes(variant) ? <IconsOutlineDarkAirbnb /> : <IconsOutlineAirbnb />}>Icon Right</Button> },
+            ];
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {variants.map((variant) => (
+                  <Card key={variant} variant="elevated" padding="lg">
+                    <CardHeader>
+                      <CardTitle className="capitalize">{variant} Buttons</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {statuses.map((status) => (
+                        <div key={status.key}>
+                          <div className="font-medium text-neutral-07 mb-2 text-sm">{status.label}</div>
+                          <div className="flex flex-wrap gap-3">
+                            {sizes.map((size) => (
+                              <div key={size} className="mb-2">
+                                {status.render(variant, size)}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                      {/* Full Width apenas um por Card */}
+                      <div>
+                        <div className="font-medium text-neutral-07 mb-2 text-sm">Full Width</div>
+                        <Button variant={variant} size="md" fullWidth>
+                          Full Width
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            );
+          })()}
         </div>
 
         {/* Airbnb Icons Showcase */}
@@ -278,33 +338,6 @@ export default function Home() {
           <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Airbnb Icons</h2>
           <AirbnbIconsGrid />
         </section>
-
-        {/* Airbnb Buttons Showcase 
-        <section className="mb-16">
-          <h2 className="text-4xl font-semibold text-shade-02 mb-8 font-circular-medium">Airbnb Buttons</h2>
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-bold mb-2">Primary</h3>
-              <Button variant="primary" size="md">Primary</Button>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-2">Secondary</h3>
-              <Button variant="secondary" size="md">Secondary</Button>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-2">Tertiary</h3>
-              <Button variant="tertiary" size="md">Tertiary</Button>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-2">Link</h3>
-              <Button variant="link" size="md">Link</Button>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-2">Com ícone</h3>
-              <Button variant="primary" size="md" iconLeft={<NeonIconLaurelIcon />}>Favorito</Button>
-            </div>
-          </div>
-        </section>*/}
       </section>
 
     </main>
