@@ -173,4 +173,24 @@ function processSvgFiles() {
 
 console.log('🚀 Processando ícones SVG...');
 processSvgFiles();
-console.log('✨ Processamento concluído!'); 
+console.log('✨ Processamento concluído!');
+
+// Utilitário: Limpa o index.tsx dos ícones mantendo apenas exports válidos
+if (require.main === module && process.argv.includes('--fix-index')) {
+  const fs = require('fs');
+  const path = require('path');
+  const iconsDir = path.join(__dirname, 'components/ui/Icons');
+  const indexFile = path.join(iconsDir, 'index.tsx');
+  const files = fs.readdirSync(iconsDir)
+    .filter(f => f.endsWith('.tsx') && f !== 'index.tsx')
+    .map(f => f.replace(/\.tsx$/, ''));
+  const validSet = new Set(files);
+  const lines = fs.readFileSync(indexFile, 'utf8').split('\n');
+  const filtered = lines.filter(line => {
+    const match = line.match(/from '\.\/(.+)';/);
+    if (!match) return true;
+    return validSet.has(match[1]);
+  });
+  fs.writeFileSync(indexFile, filtered.join('\n'));
+  console.log('index.tsx limpo: apenas exports válidos mantidos.');
+} 
