@@ -11,6 +11,7 @@ interface TextFieldProps {
   type?: 'text' | 'email' | 'password' | 'number';
   className?: string;
   iconRight?: React.ReactNode;
+  disabled?: boolean;
 }
 
 const TextField = ({
@@ -23,6 +24,7 @@ const TextField = ({
   type = 'text',
   className = '',
   iconRight,
+  disabled = false,
 }: TextFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [internalValue, setInternalValue] = useState(value || '');
@@ -54,7 +56,8 @@ const TextField = ({
       <div
         className={cn(
           'relative flex h-[56px] items-center border rounded-lg px-3 bg-white transition-all duration-150',
-          borderStyle
+          borderStyle,
+          disabled && 'opacity-60 cursor-not-allowed bg-neutral-02'
         )}
       >
         <div className="relative w-full min-h-[56px] flex items-center">
@@ -73,9 +76,11 @@ const TextField = ({
             onChange={handleChange}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            disabled={disabled}
             className={cn(
               'w-full pt-0 bg-transparent text-[#222] text-base outline-none border-none z-10',
-              iconRight && 'pr-10'
+              iconRight && 'pr-10',
+              disabled && 'bg-transparent text-[#B0B0B0] cursor-not-allowed'
             )}
           />
 

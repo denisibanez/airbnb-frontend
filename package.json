@@ -10,7 +10,9 @@
     "vite:dev": "vite",
     "vite:build": "vite build",
     "vite:preview": "vite preview",
-    "icons": "node process-icons.js"
+    "icons": "node process-icons.js",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@airbnb/lunar-icons": "^3.1.1",
@@ -22,7 +24,15 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.0.1",
     "@eslint/eslintrc": "^3",
+    "@storybook/addon-docs": "^9.0.13",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-onboarding": "^9.0.13",
+    "@storybook/nextjs": "^9.0.13",
+    "@storybook/react-vite": "^9.0.13",
+    "@storybook/testing-library": "^0.2.2",
     "@svgr/cli": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -31,6 +41,8 @@
     "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "eslint-plugin-storybook": "^9.0.13",
+    "storybook": "^9.0.13",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^6.3.5"
