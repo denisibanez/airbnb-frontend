@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsGeneralTitle = (props: SVGProps<SVGSVGElement>) => (
+const IconsGeneralTitle = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -11,4 +11,4 @@ const SvgIconsGeneralTitle = (props: SVGProps<SVGSVGElement>) => (
     <path d="M5 4v3h5.5v12h3V7H19V4z" />
   </svg>
 );
-export default SvgIconsGeneralTitle;
+export default IconsGeneralTitle;

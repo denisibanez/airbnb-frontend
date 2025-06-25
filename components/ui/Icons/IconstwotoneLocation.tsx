@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsTwoToneLocation = (props: SVGProps<SVGSVGElement>) => (
+const IconsTwoToneLocation = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -22,4 +22,4 @@ const SvgIconsTwoToneLocation = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsTwoToneLocation;
+export default IconsTwoToneLocation;

@@ -162,12 +162,19 @@ function processSvgFiles() {
     console.log('📄 Arquivo index.tsx criado manualmente (custom icons preservados)');
     const generatedComponents = fs.readdirSync(iconsDir).filter(file => file.endsWith('.tsx'));
     console.log(`📦 ${generatedComponents.length} componentes gerados em ${iconsDir}`);
+
+    // Corrige o nome do componente e do export default para remover o prefixo 'Svg'
+    const tsxFiles = fs.readdirSync(iconsDir).filter(f => f.endsWith('.tsx') && f !== 'index.tsx');
+    for (const file of tsxFiles) {
+      const filePath = path.join(iconsDir, file);
+      let content = fs.readFileSync(filePath, 'utf8');
+      // Substitui 'const SvgNome' por 'const Nome' e 'export default SvgNome' por 'export default Nome'
+      content = content.replace(/const Svg([A-Za-z0-9_]+)/, 'const $1');
+      content = content.replace(/export default Svg([A-Za-z0-9_]+)/, 'export default $1');
+      fs.writeFileSync(filePath, content);
+    }
   } catch (error) {
     console.log(`❌ Erro ao gerar componentes: ${error.message}`);
-  }
-  // Limpa pasta temporária
-  if (fs.existsSync(tmpDir)) {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 }
 
@@ -193,4 +200,4 @@ if (require.main === module && process.argv.includes('--fix-index')) {
   });
   fs.writeFileSync(indexFile, filtered.join('\n'));
   console.log('index.tsx limpo: apenas exports válidos mantidos.');
-} 
+}

@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsSocialLinkedIn = (props: SVGProps<SVGSVGElement>) => (
+const IconsSocialLinkedIn = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -15,4 +15,4 @@ const SvgIconsSocialLinkedIn = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsSocialLinkedIn;
+export default IconsSocialLinkedIn;

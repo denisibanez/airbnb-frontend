@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsOutlineFireExtinguisher = (props: SVGProps<SVGSVGElement>) => (
+const IconsOutlineFireExtinguisher = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -17,4 +17,4 @@ const SvgIconsOutlineFireExtinguisher = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsOutlineFireExtinguisher;
+export default IconsOutlineFireExtinguisher;

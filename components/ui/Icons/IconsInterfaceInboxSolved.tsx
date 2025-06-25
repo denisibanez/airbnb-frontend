@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsInterfaceInboxSolved = (props: SVGProps<SVGSVGElement>) => (
+const IconsInterfaceInboxSolved = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -12,4 +12,4 @@ const SvgIconsInterfaceInboxSolved = (props: SVGProps<SVGSVGElement>) => (
     <path d="M16.59 7.58 10 14.17l-2.59-2.58L6 13l4 4 8-8z" />
   </svg>
 );
-export default SvgIconsInterfaceInboxSolved;
+export default IconsInterfaceInboxSolved;

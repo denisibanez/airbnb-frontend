@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsNeonDarkDesert = (props: SVGProps<SVGSVGElement>) => (
+const IconsNeonDarkDesert = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -18,4 +18,4 @@ const SvgIconsNeonDarkDesert = (props: SVGProps<SVGSVGElement>) => (
     <path stroke="#fff" strokeWidth={1.5} d="M2 20.5h20" />
   </svg>
 );
-export default SvgIconsNeonDarkDesert;
+export default IconsNeonDarkDesert;

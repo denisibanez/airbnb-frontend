@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgIconsOutlineLocation = (props: SVGProps<SVGSVGElement>) => (
+const IconsOutlineLocation = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -15,4 +15,4 @@ const SvgIconsOutlineLocation = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default SvgIconsOutlineLocation;
+export default IconsOutlineLocation;
