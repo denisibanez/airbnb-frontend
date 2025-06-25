@@ -1,0 +1,25 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const IconsTwoToneDarkShared = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      fill="#fff"
+      d="M4.5 19v-8.5L12 3l7.5 7.5V19l-1 1H16v-2.5L15 16l-1.5-1 1-1.5V12l-1-1.5L12 10h-1l-1.5 1.5V13l1 1.5-1 1L8 18v2H5.5z"
+      opacity={0.2}
+    />
+    <path
+      fill="#fff"
+      fillRule="evenodd"
+      d="M11.823 4.237a.25.25 0 0 1 .354 0l6.573 6.574V19a.25.25 0 0 1-.25.25h-1.75v-.75c0-1.59-.873-2.976-2.166-3.705A2.74 2.74 0 0 0 15.25 13v-.5a3.25 3.25 0 1 0-6.5 0v.5c0 .686.251 1.313.666 1.795A4.25 4.25 0 0 0 7.25 18.5v.75H5.64a.25.25 0 0 1-.25-.25v-8.33zM8.75 19.25h6.5v-.75a2.75 2.75 0 0 0-2.75-2.75v-1.5c.69 0 1.25-.56 1.25-1.25v-.5a1.75 1.75 0 1 0-3.5 0v.5c0 .69.56 1.25 1.25 1.25v1.5a2.75 2.75 0 0 0-2.75 2.75zm11.72-6.72-.22-.22V19a1.75 1.75 0 0 1-1.75 1.75H5.64A1.75 1.75 0 0 1 3.89 19v-6.83l-.36.36-1.06-1.06 1.64-1.64 6.653-6.653a1.75 1.75 0 0 1 2.474 0L20.03 9.97l1.5 1.5z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+export default IconsTwoToneDarkShared;
