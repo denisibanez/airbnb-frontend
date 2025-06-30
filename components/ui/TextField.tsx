@@ -1,14 +1,102 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-interface TextFieldProps {
+const textFieldVariants = cva(
+  'relative flex items-center border rounded-lg px-3 bg-transparent transition-all duration-150',
+  {
+    variants: {
+      size: {
+        sm: 'h-[40px] px-2.5',
+        md: 'h-[48px] px-3',
+        lg: 'h-[56px] px-3',
+        xl: 'h-[64px] px-4',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  }
+);
+
+const inputVariants = cva(
+  'w-full pt-3  bg-transparent text-[#222] outline-none border-none z-10',
+  {
+    variants: {
+      size: {
+        sm: 'text-sm',
+        md: 'text-base',
+        lg: 'text-base',
+        xl: 'text-lg',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  }
+);
+
+const labelVariants = cva(
+  'absolute left-0 z-20  bg-transparent transition-all duration-200 pointer-events-none',
+  {
+    variants: {
+      size: {
+        sm: 'text-xs',
+        md: 'text-sm',
+        lg: 'text-base',
+        xl: 'text-base',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  }
+);
+
+const placeholderVariants = cva(
+  'absolute left-0 top-7.5 -translate-y-1/2 text-[#717171] pointer-events-none z-0',
+  {
+    variants: {
+      size: {
+        sm: 'text-xs',
+        md: 'text-sm',
+        lg: 'text-base',
+        xl: 'text-lg',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  }
+);
+
+const labelFloatTopVariants = {
+  sm: 'top-1',
+  md: 'top-2',
+  lg: 'top-2',
+  xl: 'top-3',
+};
+const inputPaddingTopVariants = {
+  sm: 'pt-3',
+  md: 'pt-3',
+  lg: 'pt-4',
+  xl: 'pt-5',
+};
+const placeholderTopVariants = {
+  sm: 'top-7',
+  md: 'top-8',
+  lg: 'top-9',
+  xl: 'top-10',
+};
+
+interface TextFieldProps extends VariantProps<typeof textFieldVariants> {
   label: string;
   placeholder?: string;
   helperText?: string;
   errorMessage?: string;
   value?: string;
   onChange?: (value: string) => void;
-  type?: 'text' | 'email' | 'password' | 'number';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel';
   className?: string;
   iconRight?: React.ReactNode;
   disabled?: boolean;
@@ -25,6 +113,7 @@ const TextField = ({
   className = '',
   iconRight,
   disabled = false,
+  size = 'md',
 }: TextFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [internalValue, setInternalValue] = useState(value || '');
@@ -41,29 +130,42 @@ const TextField = ({
     : 'text-[#717171]';
 
   const borderStyle = hasError
-    ? 'border-[#DD2A2A]'
+    ? isFocused
+      ? 'border-2 border-[#DD2A2A] bg-[#FFF6F6]'
+      : 'border border-[#DD2A2A] bg-[#FFF6F6]'
     : isFocused
-    ? 'border-[#222222] ring-2 ring-[#222222]'
-    : 'border-[#B0B0B0]';
+    ? 'border-none border-[#222222] ring-2 ring-[#222222] bg-transparent'
+    : 'border border-[#B0B0B0] bg-transparent';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInternalValue(e.target.value);
     onChange?.(e.target.value);
   };
 
+  // Altura do container baseada no tamanho
+  const containerHeight = {
+    sm: 'min-h-[40px]',
+    md: 'min-h-[48px]',
+    lg: 'min-h-[56px]',
+    xl: 'min-h-[64px]',
+  }[size || 'md'];
+
+  // Garantir que size sempre tem valor válido
+  const safeSize = size || 'md';
+
   return (
     <div className={cn('space-y-1 w-full', className)}>
       <div
         className={cn(
-          'relative flex h-[56px] items-center border rounded-lg px-3 bg-white transition-all duration-150',
+          textFieldVariants({ size }),
           borderStyle,
           disabled && 'opacity-60 cursor-not-allowed bg-neutral-02'
         )}
       >
-        <div className="relative w-full min-h-[56px] flex items-center">
+        <div className={cn("relative w-full flex items-center", containerHeight)}>
           {/* Placeholder simulado */}
-          {showFloating && !currentValue?.length  &&(
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 text-base text-[#717171] pointer-events-none z-0">
+          {showFloating && !currentValue?.length && (
+            <span className={cn(placeholderVariants({ size: safeSize }), placeholderTopVariants[safeSize], 'left-0 pl-0')}>
               {placeholder}
             </span>
           )}
@@ -78,9 +180,11 @@ const TextField = ({
             onBlur={() => setIsFocused(false)}
             disabled={disabled}
             className={cn(
-              'w-full pt-0 bg-transparent text-[#222] text-base outline-none border-none z-10',
+              inputVariants({ size: safeSize }),
+              inputPaddingTopVariants[safeSize],
               iconRight && 'pr-10',
-              disabled && 'bg-transparent text-[#B0B0B0] cursor-not-allowed'
+              disabled && 'bg-transparent text-[#B0B0B0] cursor-not-allowed',
+              'pl-0' // input sempre alinhado à esquerda
             )}
           />
 
@@ -88,10 +192,10 @@ const TextField = ({
           <label
             htmlFor={inputId}
             className={cn(
-              'absolute left-0 z-20 bg-white transition-all duration-200 pointer-events-none',
+              labelVariants({ size: safeSize }),
               showFloating
-                ? 'top-[-8px] text-xs font-medium px-1'
-                : 'top-1/2 -translate-y-1/2 text-base font-normal w-full',
+                ? `text-xs font-medium  z-20 left-0 ${labelFloatTopVariants[safeSize]}`
+                : 'top-1/2 -translate-y-1/2 font-normal w-full z-20 left-0',
               labelColor
             )}
           >
