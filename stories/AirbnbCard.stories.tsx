@@ -180,9 +180,7 @@ export const PriceDetails: Story = {
 export const Skeleton: Story = {
   render: () => (
     <div className="flex gap-6">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <AirbnbCard key={i} skeleton />
-      ))}
+      <AirbnbCard  skeleton />
     </div>
   ),
 };

@@ -74,21 +74,15 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
   if (skeleton) {
     return (
       <div className={cn('bg-transparent rounded-[16px] w-[308px] flex flex-col overflow-visible relative animate-pulse', className)}>
-        <div className="relative w-full h-[204px] rounded-[16px] bg-neutral-200 flex items-center justify-center overflow-hidden shadow-airbnb-02">
-          <div className="absolute inset-0 border-2 border-blue-400 rounded-[16px]" style={{ boxSizing: 'border-box' }} />
-        </div>
-        <div className="flex-1 flex flex-col px-4 py-3 gap-2">
-          <div className="flex items-center gap-2">
-            <div className="h-4 bg-neutral-200 rounded w-1/3" />
+        <div className="relative w-full h-[204px] rounded-[16px] bg-neutral-200 flex items-center justify-center overflow-hidden shadow-airbnb-02" />
+        <div className="flex-1 flex flex-col py-4 gap-1 bg-white rounded-b-[12px] ">
+          <div className="flex items-center">
+            <div className="h-4 bg-neutral-200 rounded w-2/3" />
             <div className="h-4 bg-neutral-200 rounded w-1/6 ml-auto" />
           </div>
-          <div className="h-5 bg-neutral-200 rounded w-2/3 mt-2" />
-          <div className="h-4 bg-neutral-200 rounded w-1/2 mt-2" />
-          <div className="flex items-center gap-2 mt-2">
-            <div className="h-4 bg-neutral-200 rounded w-1/4" />
-            <div className="h-4 bg-neutral-200 rounded w-1/4" />
-            <div className="h-4 bg-neutral-200 rounded w-1/6 ml-auto" />
-          </div>
+          <div className="h-4 bg-neutral-200 rounded w-full " />
+          <div className="h-4 bg-neutral-200 rounded w-full mb-1" />
+          <div className="h-4 bg-neutral-200 rounded w-full mb-1" />
         </div>
       </div>
     );
@@ -135,7 +129,7 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
             </>
           ) : (
             <img
-              src="https://www.cassidybros.ie/wp-content/uploads/2020/11/product-placeholder.jpg"
+              src="https://www.getchalet.com/images/placeholder.svg"
               alt="Placeholder"
               className="object-cover w-full h-full select-none"
               draggable={false}
@@ -230,12 +224,18 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
   // Card simples
   if (variant === 'simple') {
     return (
-      <div className={cn('bg-white rounded-xl shadow-sm border border-[#E0E0E0] w-[220px] flex flex-col overflow-hidden', className)}>
-        <div className="w-full h-[120px] bg-[#E0E0E0] flex items-center justify-center">
+      <div className={cn('bg-white rounded-xl shadow-sm border border-[#E0E0E0] w-[308px] flex flex-col overflow-hidden', className)}>
+        <div className="w-full h-[204px]  flex items-center justify-center">
           {imageUrl ? (
             <img src={imageUrl} alt={title} className="object-cover w-full h-full" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[#B0B0B0]">Image</div>
+            <img
+              src="https://www.getchalet.com/images/placeholder.svg"
+              alt="Placeholder"
+              className="w-full h-full select-none object-cover"
+              draggable={false}
+
+            />
           )}
         </div>
         <div className="flex-1 flex flex-col px-3 py-3 gap-1">
