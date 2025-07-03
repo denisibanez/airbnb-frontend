@@ -31,7 +31,7 @@ export const Sizes: Story = {
   ),
 };
 
-export const Loading: Story = { args: { variant: 'primary', loading: true, children: 'Loading' } };
+export const Loading: Story = { args: { variant: 'primary', loading: true, children: '' } };
 export const Disabled: Story = { args: { variant: 'primary', disabled: true, children: 'Disabled' } };
 export const FullWidth: Story = { args: { variant: 'primary', fullWidth: true, children: 'Full Width' } };
 

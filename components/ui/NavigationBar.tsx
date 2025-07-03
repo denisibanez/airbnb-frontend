@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 import SearchBar from './SearchBar';
 import { IconsNeonAirbnb, IconsInterfaceMenu, IconsGeneralUser } from './Icons';
 import { GlobeIcon } from './IconCustomized/IconCustomized';
