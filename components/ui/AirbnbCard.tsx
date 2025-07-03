@@ -8,6 +8,8 @@ import {
   IconsInterfaceStarFull,
   IconsNeonSuperhost,
 } from './Icons';
+import DatePicker from './DatePicker';
+import GuestSelector from './GuestSelector';
 
 export type AirbnbCardVariant = 'listing' | 'simple' | 'dates' | 'reserve' | 'priceDetails';
 
@@ -270,13 +272,63 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
 
   // Card de reserva
   if (variant === 'reserve') {
+    const [showDates, setShowDates] = React.useState(false);
+    const [showGuests, setShowGuests] = React.useState(false);
+    const [showShortcuts, setShowShortcuts] = React.useState(false);
+    const [dateRange, setDateRange] = React.useState<[Date|null, Date|null]>([null, null]);
+    const [guests, setGuests] = React.useState({ adults: 1, children: 0, infants: 0, pets: 0 });
+
+    // Função para fechar modais com ESC
+    React.useEffect(() => {
+      function onKey(e: KeyboardEvent) {
+        if (e.key === 'Escape') {
+          setShowDates(false);
+          setShowGuests(false);
+          setShowShortcuts(false);
+        }
+      }
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
+    // Overlay/modal genérico
+    function Modal({ open, onClose, children }: { open: boolean, onClose: () => void, children: React.ReactNode }) {
+      if (!open) return null;
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+          <div className="relative z-10 animate-fadeInUp" tabIndex={-1}>{children}</div>
+        </div>
+      );
+    }
+
+    // Modal de atalhos de teclado
+    function ShortcutsModal({ open, onClose }: { open: boolean, onClose: () => void }) {
+      return (
+        <Modal open={open} onClose={onClose}>
+          <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[340px] p-6 flex flex-col gap-2">
+            <div className="font-bold text-lg mb-2">Atalhos de teclado</div>
+            <div className="flex flex-col gap-2 text-[15px] text-[#222]">
+              <div className="flex items-center gap-2"><kbd className="kbd">↵</kbd> Selecione a data desejada</div>
+              <div className="flex items-center gap-2"><kbd className="kbd">←/→</kbd> Mover para trás (esquerda) e para frente (direita) num dia</div>
+              <div className="flex items-center gap-2"><kbd className="kbd">↑/↓</kbd> Mover para trás (cima) ou para frente (baixo) numa semana</div>
+              <div className="flex items-center gap-2"><kbd className="kbd">PGUP/PGDN</kbd> Alternar meses</div>
+              <div className="flex items-center gap-2"><kbd className="kbd">HOME/END</kbd> Ir para o primeiro ou último dia da semana</div>
+              <div className="flex items-center gap-2"><kbd className="kbd">?</kbd> Abrir este painel</div>
+            </div>
+            <button className="mt-4 underline text-[#222] text-[15px]" onClick={onClose}>Voltar para o calendário</button>
+          </div>
+        </Modal>
+      );
+    }
+
     return (
       <div className={cn('bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[375px] p-6 flex flex-col gap-4', className)}>
         {/* Header: preço + avaliação */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1">
             {priceOld && <span className="text-xl text-[#B0B0B0] line-through font-normal">{priceOld}</span>}
-            {price && <span className="text-xl font-bold text-[#222]">{price}</span>}
+            {price && <span className="text-xl font-bold text-[#222] underline">{price}</span>}
             <span className="text-base text-[#717171] font-normal">night</span>
           </div>
           {rating !== undefined && (
@@ -291,20 +343,39 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
         {/* Box de datas e hóspedes */}
         <div className="rounded-xl border border-[#B0B0B0] divide-y divide-[#B0B0B0] overflow-hidden mb-2">
           <div className="flex divide-x divide-[#B0B0B0]">
-            <div className="flex-1 p-3">
+            <div className="flex-1 p-3 cursor-pointer hover:bg-neutral-100 transition" onClick={() => setShowDates(true)} role="button" tabIndex={0}>
               <div className="text-xs font-semibold uppercase ">Check-in</div>
               <div className="text-base text-[#717171]">{details?.[0]?.value || '--'}</div>
             </div>
-            <div className="flex-1 p-3">
+            <div className="flex-1 p-3 cursor-pointer hover:bg-neutral-100 transition" onClick={() => setShowDates(true)} role="button" tabIndex={0}>
               <div className="text-xs font-semibold uppercase ">Checkout</div>
               <div className="text-base text-[#717171]">{details?.[1]?.value || '--'}</div>
             </div>
           </div>
-          <div className="p-3">
+          <div className="p-3 cursor-pointer hover:bg-neutral-100 transition" onClick={() => setShowGuests(true)} role="button" tabIndex={0}>
             <div className="text-xs font-semibold uppercase">Guests</div>
             <div className="text-base text-[#717171]">{details?.[2]?.value || '--'}</div>
           </div>
         </div>
+        {/* Modais */}
+        <Modal open={showDates} onClose={() => setShowDates(false)}>
+          <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[480px] p-6 flex flex-col gap-4 relative">
+            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-neutral-100" onClick={() => setShowDates(false)} aria-label="Fechar">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 5l8 8M13 5l-8 8" stroke="#222" strokeWidth="2" strokeLinecap="round" /></svg>
+            </button>
+            <DatePicker value={dateRange} onChange={setDateRange} />
+            <button className="underline text-[#222] text-[15px] self-end" onClick={() => setShowShortcuts(true)}>Atalhos de teclado</button>
+          </div>
+        </Modal>
+        <ShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+        <Modal open={showGuests} onClose={() => setShowGuests(false)}>
+          <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[380px] p-6 flex flex-col gap-4 relative">
+            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-neutral-100" onClick={() => setShowGuests(false)} aria-label="Fechar">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 5l8 8M13 5l-8 8" stroke="#222" strokeWidth="2" strokeLinecap="round" /></svg>
+            </button>
+            <GuestSelector value={guests} onChange={v => v && setGuests(v)} />
+          </div>
+        </Modal>
         {/* Botão Reserve */}
         {actionLabel && (
           <button
