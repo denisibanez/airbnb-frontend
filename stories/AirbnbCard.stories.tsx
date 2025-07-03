@@ -117,38 +117,21 @@ export const Reserve: Story = {
   args: {
     variant: 'reserve',
     title: 'Reserva',
-    summary: (
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="line-through text-[#B0B0B0] text-lg">$500</span>
-          <span className="text-2xl font-bold">$440</span>
-          <span className="text-sm text-[#222]">night</span>
-          <span className="ml-auto text-sm text-[#222]">4.99 · 337 reviews</span>
-        </div>
-        <div className="flex gap-2 mb-2">
-          <div className="flex-1">
-            <div className="text-xs text-[#717171]">CHECK-IN</div>
-            <div className="font-medium text-[#222]">2/6/2023</div>
-          </div>
-          <div className="flex-1">
-            <div className="text-xs text-[#717171]">CHECKOUT</div>
-            <div className="font-medium text-[#222]">2/11/2023</div>
-          </div>
-          <div className="flex-1">
-            <div className="text-xs text-[#717171]">GUESTS</div>
-            <div className="font-medium text-[#222]">1 guest</div>
-          </div>
-        </div>
-      </div>
-    ),
+    priceOld: '$500',
+    price: '$440',
+    rating: 4.99,
+    reviewsCount: 337,
+    actionLabel: 'Reserve',
     details: [
+      { label: 'CHECK-IN', value: '2/6/2023' },
+      { label: 'CHECKOUT', value: '2/11/2023' },
+      { label: 'GUESTS', value: '1 guest' },
       { label: '500 x 5 nights', value: '$2,500' },
       { label: 'Long stay discount', value: '-$300' },
       { label: 'Cleaning fee', value: '$200' },
       { label: 'Service fee', value: '$0' },
       { label: 'Total before taxes', value: '$2,400', highlight: true },
     ],
-    actionLabel: 'Reserve',
   },
 };
 

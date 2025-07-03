@@ -268,22 +268,71 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
   // Card de reserva
   if (variant === 'reserve' || variant === 'priceDetails') {
     return (
-      <div className={cn('bg-white rounded-xl shadow-sm border border-[#E0E0E0] w-[340px] p-6 flex flex-col gap-3', className)}>
-        {summary}
-        {details && (
-          <div className="divide-y divide-[#E0E0E0]">
-            {details.map((d, i) => (
-              <div key={i} className={cn('flex justify-between py-2 text-sm', d.highlight && 'font-semibold text-[#222]')}>{d.label}<span>{d.value}</span></div>
-            ))}
+      <div className={cn('bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[380px] p-6 flex flex-col gap-4', className)}>
+        {/* Header: preço + avaliação */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1">
+            {priceOld && <span className="text-xl text-[#B0B0B0] line-through font-normal">{priceOld}</span>}
+            {price && <span className="text-xl font-bold text-[#222]">{price}</span>}
+            <span className="text-base text-[#717171] font-normal">night</span>
           </div>
-        )}
+          {rating !== undefined && (
+            <span className="flex items-center text-base text-[#222] font-bold">
+              <IconsInterfaceStarFull className="w-5 h-5 text-[#222]" />
+              <span className="font-bold text-[#222]">{rating.toFixed(2)}</span>
+              <span className="text-[#B0B0B0] mx-1">·</span>
+              {reviewsCount !== undefined && <span className="text-[#717171] font-normal">{reviewsCount} reviews</span>}
+            </span>
+          )}
+        </div>
+        {/* Box de datas e hóspedes */}
+        <div className="rounded-xl border border-[#B0B0B0] divide-y divide-[#B0B0B0] overflow-hidden mb-2">
+          <div className="flex divide-x divide-[#B0B0B0]">
+            <div className="flex-1 p-3">
+              <div className="text-xs font-semibold uppercase ">Check-in</div>
+              <div className="text-base text-[#717171]">{details?.[0]?.value || '--'}</div>
+            </div>
+            <div className="flex-1 p-3">
+              <div className="text-xs font-semibold uppercase ">Checkout</div>
+              <div className="text-base text-[#717171]">{details?.[1]?.value || '--'}</div>
+            </div>
+          </div>
+          <div className="p-3">
+            <div className="text-xs font-semibold uppercase">Guests</div>
+            <div className="text-base text-[#717171]">{details?.[2]?.value || '--'}</div>
+          </div>
+        </div>
+        {/* Botão Reserve */}
         {actionLabel && (
           <button
-            className="mt-4 w-full bg-[#FF385C] text-white font-semibold rounded-lg py-3 text-base hover:bg-[#FF5A5F] transition-colors"
+            className="w-full bg-gradient-to-r from-[#EB4A5A] to-[#C13584] text-white font-semibold rounded-xl py-3 text-lg hover:brightness-105 transition-colors shadow"
             onClick={onAction}
           >
             {actionLabel}
           </button>
+        )}
+        {/* Texto auxiliar */}
+        <div className="text-center text-[#717171] text-sm mb-2">You won't be charged yet</div>
+        {/* Tabela de valores */}
+        {details && (
+          <div className="mb-2">
+            {details.slice(3, -1).map((d, i) => (
+              <div key={i} className="flex justify-between py-2 text-base">
+                <span className="underline">{d.label}</span>
+                <span className={cn(
+                  d.label.toLowerCase().includes('discount') ? 'text-green-600 font-medium' : '',
+                  d.highlight ? 'font-semibold text-[#222]' : '',
+                )}>{d.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Total */}
+        {details && details.length > 0 && (
+          <div className="flex justify-between items-center pt-4 border-t border-[#E0E0E0] mt-2">
+            <span className="font-bold text-lg text-[#222]">{details[details.length-1].label}</span>
+            <span className=" text-lg text-[#222]">{details[details.length-1].value}</span>
+          </div>
         )}
       </div>
     );
