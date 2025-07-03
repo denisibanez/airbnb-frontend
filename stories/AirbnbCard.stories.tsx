@@ -138,21 +138,12 @@ export const Reserve: Story = {
 export const PriceDetails: Story = {
   args: {
     variant: 'priceDetails',
-    title: 'Detalhes de preço',
-    summary: (
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-semibold uppercase text-[#B0B0B0]">Entire cabin</span>
-          <span className="ml-auto text-xs text-[#717171]">Superhost</span>
-        </div>
-        <div className="font-medium text-[#222]">Glacier Pines Cabin (New Hot Tub Installed!)</div>
-        <div className="text-xs text-[#717171]">4.86 (110 reviews)</div>
-        <div className="text-xs text-[#717171] mt-1">Your booking is protected by <span className="text-[#FF385C] font-semibold">aircover</span></div>
-      </div>
-    ),
+    title: 'Glacier Pines Cabin (New Hot Tub Installed!)',
+    rating: 4.66,
+    reviewsCount: 110,
     details: [
       { label: '500 x 5 nights', value: '$2,500' },
-      { label: 'Long stay discount', value: '-$300' },
+      { label: 'Long stay discount', value: '$2,500' },
       { label: 'Cleaning fee', value: '$200' },
       { label: 'Service fee', value: '$0' },
       { label: 'Total (USD)', value: '$2,400', highlight: true },

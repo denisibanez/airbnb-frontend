@@ -6,6 +6,7 @@ import {
   IconsInterfaceChevronLeft,
   IconsInterfaceChevronRight,
   IconsInterfaceStarFull,
+  IconsNeonSuperhost,
 } from './Icons';
 
 export type AirbnbCardVariant = 'listing' | 'simple' | 'dates' | 'reserve' | 'priceDetails';
@@ -35,6 +36,8 @@ type AirbnbCardBaseProps = {
   showFooter?: boolean;
   skeleton?: boolean;
 };
+
+import aircover from '@/assets/images/aircover.png';
 
 interface AirbnbCardProps extends AirbnbCardBaseProps {
   title?: string;
@@ -266,9 +269,9 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
   }
 
   // Card de reserva
-  if (variant === 'reserve' || variant === 'priceDetails') {
+  if (variant === 'reserve') {
     return (
-      <div className={cn('bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[380px] p-6 flex flex-col gap-4', className)}>
+      <div className={cn('bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[375px] p-6 flex flex-col gap-4', className)}>
         {/* Header: preço + avaliação */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1">
@@ -332,6 +335,76 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
           <div className="flex justify-between items-center pt-4 border-t border-[#E0E0E0] mt-2">
             <span className="font-bold text-lg text-[#222]">{details[details.length-1].label}</span>
             <span className=" text-lg text-[#222]">{details[details.length-1].value}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Card de detalhes de preço (priceDetails)
+  if (variant === 'priceDetails') {
+    return (
+      <div className={cn('bg-white rounded-[16px] shadow-airbnb-03 border border-[#E0E0E0] max-w-[477px] w-full px-5 py-5 flex flex-col', className)}>
+        {/* Imagem e título */}
+        <div className="flex gap-3 mb-1 items-start">
+          {imgs.length > 0 ? (
+            <img
+              src={imgs[0]}
+              alt={title}
+              className="w-[124px] h-[106px] rounded-lg object-cover flex-shrink-0"
+              draggable={false}
+            />
+          ) : (
+            <img
+              src="https://www.getchalet.com/images/placeholder.svg"
+              alt="Placeholder"
+              className="w-[124px] h-[106px] rounded-lg object-cover flex-shrink-0"
+              draggable={false}
+            />
+          )}
+          <div className='flex gap-14 flex-col'>
+          <div className="flex-1 flex flex-col justify-center">
+            <div className="text-[11px] font-semibold text-[#B0B0B0] leading-tight">Entire cabin</div>
+            <div className="text-[14px] text-[#222] font-normal leading-tight">{title}</div>
+          </div>
+
+           {/* Avaliação, reviews, superhost */}
+          <div className="flex items-center gap-2 text-[12px] text-[#222] mb-1">
+            <IconsInterfaceStarFull className="w-4 h-4 text-[#222]" />
+            <span className="font-semibold">{rating?.toFixed(2)}</span>
+            {reviewsCount !== undefined && <span className="text-[#717171]">({reviewsCount} reviews)</span>}
+            <span className="mx-1 text-[#B0B0B0]">·</span>
+            <IconsNeonSuperhost className="w-4 h-4 text-[#222]" />
+            <span className="text-[#717171]">Superhost</span>
+          </div>
+          </div>
+        </div>
+       
+        {/* Proteção aircover */}
+        <hr className="border-[#E0E0E0] mt-4 mb-2" />
+        <div className="text-[13px] text-[#717171] my-3 flex items-center">Your booking is protected by 
+          <img src={aircover.src} alt="aircover" style={{ display: 'inline', height: 16, marginLeft: 4, verticalAlign: 'middle' }} className='mb-1' />
+        </div>
+        <hr className="border-[#E0E0E0] mt-2 mb-4" />
+        {/* Título Price details */}
+        <div className="font-medium text-[#222] mb-2 text-2xl">Price details</div>
+        {/* Tabela de valores */}
+        {details && (
+          <div className="mb-2">
+            {details.slice(0, -1).map((d, i) => (
+              <div key={i} className="flex justify-between py-1 text-[15px]">
+                <span className="underline">{d.label}</span>
+                <span>{d.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <hr className="border-[#E0E0E0] my-2" />
+        {/* Total */}
+        {details && details.length > 0 && (
+          <div className="flex justify-between items-center pt-2">
+            <span className="font-bold text-base text-[#222]">{details[details.length-1].label}</span>
+            <span className=" text-base text-[#222]">{details[details.length-1].value}</span>
           </div>
         )}
       </div>
