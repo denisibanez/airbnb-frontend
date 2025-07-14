@@ -7,9 +7,11 @@ import {
   IconsInterfaceChevronRight,
   IconsInterfaceStarFull,
   IconsNeonSuperhost,
+  IconsInterfaceChevronDown,
 } from './Icons';
 import DatePicker from './DatePicker';
 import GuestSelector from './GuestSelector';
+import ReactDOM from 'react-dom';
 
 export type AirbnbCardVariant = 'listing' | 'simple' | 'dates' | 'reserve' | 'priceDetails';
 
@@ -43,6 +45,7 @@ import aircover from '@/assets/images/aircover.png';
 
 interface AirbnbCardProps extends AirbnbCardBaseProps {
   title?: string;
+  datePickerProps?: Partial<import('./DatePicker').DatePickerProps>;
 }
 
 const AirbnbCard: React.FC<AirbnbCardProps> = ({
@@ -69,6 +72,7 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
   children,
   showFooter,
   skeleton,
+  datePickerProps,
 }) => {
   // Carrossel de imagens
   const imgs = images && images.length > 0 ? images : imageUrl ? [imageUrl] : [];
@@ -272,17 +276,57 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
 
   // Card de reserva
   if (variant === 'reserve') {
-    const [showDates, setShowDates] = React.useState(false);
+    const [showDates, setShowDates] = React.useState<null | 'checkin' | 'checkout'>(null);
     const [showGuests, setShowGuests] = React.useState(false);
     const [showShortcuts, setShowShortcuts] = React.useState(false);
     const [dateRange, setDateRange] = React.useState<[Date|null, Date|null]>([null, null]);
     const [guests, setGuests] = React.useState({ adults: 1, children: 0, infants: 0, pets: 0 });
+    const checkinRef = React.useRef<HTMLDivElement>(null);
+    const checkoutRef = React.useRef<HTMLDivElement>(null);
+    const guestsRef = React.useRef<HTMLDivElement>(null);
+    const [dropdownPos, setDropdownPos] = React.useState<{top: number, left: number, width: number}>();
+
+    // Utilitário para parsear datas no formato dd/MM/yyyy
+    function parseDateDMY(str: string): Date | null {
+      if (!str) return null;
+      const [day, month, year] = str.split('/').map(Number);
+      if (!day || !month || !year) return null;
+      return new Date(year, month - 1, day);
+    }
+
+    // Preencher dateRange com datas vindas de details (se existirem)
+    React.useEffect(() => {
+      if (details?.[0]?.value || details?.[1]?.value) {
+        const checkin = details?.[0]?.value ? parseDateDMY(details[0].value) : null;
+        const checkout = details?.[1]?.value ? parseDateDMY(details[1].value) : null;
+        setDateRange([checkin, checkout]);
+      }
+    }, [details]);
+
+    // Estado controlado para details
+    const [detailsState, setDetailsState] = React.useState(details);
+
+    // Sincronizar detailsState com prop details (caso mude externamente)
+    React.useEffect(() => {
+      setDetailsState(details);
+    }, [details]);
+
+    // Handler para atualizar datas
+    const handleDateChange = (range: [Date | null, Date | null]) => {
+      setDateRange(range);
+      setDetailsState(prev => {
+        const newDetails = [...(prev || [])];
+        newDetails[0] = { ...newDetails[0], value: range[0] ? range[0].toLocaleDateString('pt-BR') : '' };
+        newDetails[1] = { ...newDetails[1], value: range[1] ? range[1].toLocaleDateString('pt-BR') : '' };
+        return newDetails;
+      });
+    };
 
     // Função para fechar modais com ESC
     React.useEffect(() => {
       function onKey(e: KeyboardEvent) {
         if (e.key === 'Escape') {
-          setShowDates(false);
+          setShowDates(null);
           setShowGuests(false);
           setShowShortcuts(false);
         }
@@ -291,39 +335,77 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
       return () => window.removeEventListener('keydown', onKey);
     }, []);
 
+    // Atualiza posição do dropdown ao abrir
+    React.useEffect(() => {
+      if (showDates === 'checkin' && checkinRef.current) {
+        const rect = checkinRef.current.getBoundingClientRect();
+        setDropdownPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX, width: rect.width });
+      } else if (showDates === 'checkout' && checkoutRef.current) {
+        const rect = checkoutRef.current.getBoundingClientRect();
+        setDropdownPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX, width: rect.width });
+      } else if (showGuests && guestsRef.current) {
+        const rect = guestsRef.current.getBoundingClientRect();
+        setDropdownPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX, width: rect.width });
+      } else {
+        setDropdownPos(undefined);
+      }
+    }, [showDates, showGuests]);
+
+    // Fecha dropdown de guests ao clicar fora
+    React.useEffect(() => {
+      if (!showGuests) return;
+      function handle(e: MouseEvent) {
+        if (guestsRef.current && !guestsRef.current.contains(e.target as Node)) {
+          setShowGuests(false);
+        }
+      }
+      document.addEventListener('mousedown', handle);
+      return () => document.removeEventListener('mousedown', handle);
+    }, [showGuests]);
+
     // Overlay/modal genérico
-    function Modal({ open, onClose, children }: { open: boolean, onClose: () => void, children: React.ReactNode }) {
+    function Overlay({ open, onClose }: { open: boolean, onClose: () => void }) {
       if (!open) return null;
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-          <div className="relative z-10 animate-fadeInUp" tabIndex={-1}>{children}</div>
-        </div>
+      return <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />;
+    }
+
+    // Dropdown genérico via portal
+    function Dropdown({ open, anchor, children }: { open: boolean, anchor: {top: number, left: number, width: number} | undefined, children: React.ReactNode }) {
+      if (!open || !anchor) return null;
+      return ReactDOM.createPortal(
+        <div style={{ position: 'absolute', top: anchor.top, left: anchor.left, width: anchor.width, zIndex: 50 }}>
+          {children}
+        </div>,
+        document.body
       );
     }
 
     // Modal de atalhos de teclado
     function ShortcutsModal({ open, onClose }: { open: boolean, onClose: () => void }) {
+      if (!open) return null;
       return (
-        <Modal open={open} onClose={onClose}>
-          <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[340px] p-6 flex flex-col gap-2">
-            <div className="font-bold text-lg mb-2">Atalhos de teclado</div>
-            <div className="flex flex-col gap-2 text-[15px] text-[#222]">
-              <div className="flex items-center gap-2"><kbd className="kbd">↵</kbd> Selecione a data desejada</div>
-              <div className="flex items-center gap-2"><kbd className="kbd">←/→</kbd> Mover para trás (esquerda) e para frente (direita) num dia</div>
-              <div className="flex items-center gap-2"><kbd className="kbd">↑/↓</kbd> Mover para trás (cima) ou para frente (baixo) numa semana</div>
-              <div className="flex items-center gap-2"><kbd className="kbd">PGUP/PGDN</kbd> Alternar meses</div>
-              <div className="flex items-center gap-2"><kbd className="kbd">HOME/END</kbd> Ir para o primeiro ou último dia da semana</div>
-              <div className="flex items-center gap-2"><kbd className="kbd">?</kbd> Abrir este painel</div>
+        <>
+          <Overlay open={open} onClose={onClose} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[340px] p-6 flex flex-col gap-2">
+              <div className="font-bold text-lg mb-2">Atalhos de teclado</div>
+              <div className="flex flex-col gap-2 text-[15px] text-[#222]">
+                <div className="flex items-center gap-2"><kbd className="kbd">↵</kbd> Selecione a data desejada</div>
+                <div className="flex items-center gap-2"><kbd className="kbd">←/→</kbd> Mover para trás (esquerda) e para frente (direita) num dia</div>
+                <div className="flex items-center gap-2"><kbd className="kbd">↑/↓</kbd> Mover para trás (cima) ou para frente (baixo) numa semana</div>
+                <div className="flex items-center gap-2"><kbd className="kbd">PGUP/PGDN</kbd> Alternar meses</div>
+                <div className="flex items-center gap-2"><kbd className="kbd">HOME/END</kbd> Ir para o primeiro ou último dia da semana</div>
+                <div className="flex items-center gap-2"><kbd className="kbd">?</kbd> Abrir este painel</div>
+              </div>
+              <button className="mt-4 underline text-[#222] text-[15px]" onClick={onClose}>Voltar para o calendário</button>
             </div>
-            <button className="mt-4 underline text-[#222] text-[15px]" onClick={onClose}>Voltar para o calendário</button>
           </div>
-        </Modal>
+        </>
       );
     }
 
     return (
-      <div className={cn('bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[375px] p-6 flex flex-col gap-4', className)}>
+      <div className={cn('bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[375px] p-4 flex flex-col gap-4 relative', className)}>
         {/* Header: preço + avaliação */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1">
@@ -343,39 +425,31 @@ const AirbnbCard: React.FC<AirbnbCardProps> = ({
         {/* Box de datas e hóspedes */}
         <div className="rounded-xl border border-[#B0B0B0] divide-y divide-[#B0B0B0] overflow-hidden mb-2">
           <div className="flex divide-x divide-[#B0B0B0]">
-            <div className="flex-1 p-3 cursor-pointer hover:bg-neutral-100 transition" onClick={() => setShowDates(true)} role="button" tabIndex={0}>
+            <div ref={checkinRef} className="flex-1 p-3 cursor-pointer hover:bg-neutral-100 transition relative" onClick={() => { setShowDates('checkin'); setShowGuests(false); }} role="button" tabIndex={0}>
               <div className="text-xs font-semibold uppercase ">Check-in</div>
-              <div className="text-base text-[#717171]">{details?.[0]?.value || '--'}</div>
+              <div className="text-base text-[#717171]">{detailsState?.[0]?.value || 'Adicionar data'}</div>
             </div>
-            <div className="flex-1 p-3 cursor-pointer hover:bg-neutral-100 transition" onClick={() => setShowDates(true)} role="button" tabIndex={0}>
+            <div ref={checkoutRef} className="flex-1 p-3 cursor-pointer hover:bg-neutral-100 transition relative" onClick={() => { setShowDates('checkout'); setShowGuests(false); }} role="button" tabIndex={0}>
               <div className="text-xs font-semibold uppercase ">Checkout</div>
-              <div className="text-base text-[#717171]">{details?.[1]?.value || '--'}</div>
+              <div className="text-base text-[#717171]">{detailsState?.[1]?.value || 'Adicionar data'}</div>
             </div>
           </div>
-          <div className="p-3 cursor-pointer hover:bg-neutral-100 transition" onClick={() => setShowGuests(true)} role="button" tabIndex={0}>
-            <div className="text-xs font-semibold uppercase">Guests</div>
-            <div className="text-base text-[#717171]">{details?.[2]?.value || '--'}</div>
+          <div ref={guestsRef} className="p-3 cursor-pointer hover:bg-neutral-100 transition flex items-center justify-between" onClick={() => { setShowGuests(true); setShowDates(null); }} role="button" tabIndex={0}>
+            <div>
+              <div className="text-xs font-semibold uppercase">Guests</div>
+              <div className="text-base text-[#717171]">{details?.[2]?.value || '--'}</div>
+            </div>
+            <IconsInterfaceChevronDown className={cn('w-5 h-5 ml-2 transition-transform', showGuests && 'rotate-180')} />
           </div>
         </div>
-        {/* Modais */}
-        <Modal open={showDates} onClose={() => setShowDates(false)}>
-          <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[480px] p-6 flex flex-col gap-4 relative">
-            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-neutral-100" onClick={() => setShowDates(false)} aria-label="Fechar">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 5l8 8M13 5l-8 8" stroke="#222" strokeWidth="2" strokeLinecap="round" /></svg>
-            </button>
-            <DatePicker value={dateRange} onChange={setDateRange} />
-            <button className="underline text-[#222] text-[15px] self-end" onClick={() => setShowShortcuts(true)}>Atalhos de teclado</button>
-          </div>
-        </Modal>
+        {/* Dropdowns de datas e guests não têm overlay */}
+        <Dropdown open={!!showDates && !!dropdownPos} anchor={dropdownPos}>
+          <DatePicker value={dateRange} onChange={handleDateChange} variant='dropdown' onRequestClose={() => setShowDates(null)} {...(datePickerProps || {})} />
+        </Dropdown>
+        <Dropdown open={showGuests && !!dropdownPos} anchor={dropdownPos}>
+          <GuestSelector value={guests} onChange={v => v && setGuests(v)} onClose={() => setShowGuests(false)} />
+        </Dropdown>
         <ShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
-        <Modal open={showGuests} onClose={() => setShowGuests(false)}>
-          <div className="bg-white rounded-2xl shadow-airbnb-03 border border-[#E0E0E0] w-[380px] p-6 flex flex-col gap-4 relative">
-            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-neutral-100" onClick={() => setShowGuests(false)} aria-label="Fechar">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 5l8 8M13 5l-8 8" stroke="#222" strokeWidth="2" strokeLinecap="round" /></svg>
-            </button>
-            <GuestSelector value={guests} onChange={v => v && setGuests(v)} />
-          </div>
-        </Modal>
         {/* Botão Reserve */}
         {actionLabel && (
           <button

@@ -113,25 +113,38 @@ export const Simple: Story = {
   },
 };
 
+const today = new Date();
+
 export const Reserve: Story = {
   args: {
     variant: 'reserve',
-    title: 'Reserva',
+    title: 'Reserva em Yosemite',
     priceOld: '$500',
     price: '$440',
     rating: 4.99,
     reviewsCount: 337,
     actionLabel: 'Reserve',
     details: [
-      { label: 'CHECK-IN', value: '2/6/2023' },
-      { label: 'CHECKOUT', value: '2/11/2023' },
-      { label: 'GUESTS', value: '1 guest' },
-      { label: '500 x 5 nights', value: '$2,500' },
-      { label: 'Long stay discount', value: '-$300' },
-      { label: 'Cleaning fee', value: '$200' },
+      { label: 'CHECK-IN', value: '18/08/2025' },
+      { label: 'CHECKOUT', value: '20/08/2025' },
+      { label: 'GUESTS', value: '2 guests' },
+      { label: '500 x 2 nights', value: '$1,000' },
+      { label: 'Long stay discount', value: '-$60' },
+      { label: 'Cleaning fee', value: '$100' },
       { label: 'Service fee', value: '$0' },
-      { label: 'Total before taxes', value: '$2,400', highlight: true },
+      { label: 'Total before taxes', value: '$1,040', highlight: true },
     ],
+    onAction: () => alert('Reserva realizada!'),
+    datePickerProps: {
+      unavailableDates: [
+        new Date(2025, 7, 10), // 10/08/2025
+        new Date(2025, 7, 15), // 15/08/2025
+        new Date(2025, 7, 20), // 20/08/2025
+        new Date(2025, 8, 5),  // 05/09/2025
+        new Date(2025, 8, 12), // 12/09/2025
+      ],
+    },
+    badge: '',
   },
 };
 
@@ -175,4 +188,4 @@ export const ListingDiscount: Story = {
     favorite: false,
     badge: '',
   },
-}; 
+};

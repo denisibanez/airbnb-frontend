@@ -182,7 +182,7 @@ const TextField = ({
             className={cn(
               inputVariants({ size: safeSize }),
               inputPaddingTopVariants[safeSize],
-              iconRight && 'pr-10',
+              iconRight && 'pr-8',
               disabled && 'bg-transparent text-[#B0B0B0] cursor-not-allowed',
               'pl-0' // input sempre alinhado à esquerda
             )}
@@ -204,7 +204,7 @@ const TextField = ({
 
           {/* Ícone à direita */}
           {iconRight && (
-            <span className="absolute right-0 pr-2 top-1/2 -translate-y-1/2 text-[#717171] pointer-events-none z-20">
+            <span className="absolute right-0 pr-2 top-1/2 -translate-y-1/2 text-[#717171] z-20">
               {iconRight}
             </span>
           )}
