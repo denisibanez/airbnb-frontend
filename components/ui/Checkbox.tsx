@@ -6,6 +6,7 @@ export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElemen
   error?: boolean;
   indeterminate?: boolean;
   className?: string;
+  variant?: 'style1' | 'style2' | 'style3';
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -15,6 +16,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   disabled,
   className,
   id,
+  variant = 'style1',
   ...props
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,20 +37,45 @@ const Checkbox: React.FC<CheckboxProps> = ({
       )}
     >
       <span className="relative flex items-center justify-center">
-        <input
-          ref={inputRef}
-          id={id}
-          type="checkbox"
-          disabled={disabled}
-          className={cn(
-            'peer appearance-none w-5 h-5 rounded-[4px] border border-[#B0B0B0] bg-white transition-all outline-none',
-            'focus:ring-2 focus:ring-[#B4D8F8] focus:border-[#007AAB]',
-            'checked:bg-[#222] checked:border-[#222] checked:text-white',
-            error && 'border-[#FF385C] focus:ring-[#FF385C]',
-            disabled && 'bg-[#F7F7F7] border-[#E0E0E0]',
-          )}
-          {...props}
-        />
+        {variant === 'style3' ? (
+          <div className="relative w-5 h-5">
+            <input
+              ref={inputRef}
+              id={id}
+              type="checkbox"
+              disabled={disabled}
+              className={cn(
+                'peer appearance-none w-5 h-5 rounded-[4px] bg-white transition-all outline-none shadow-sm',
+                'focus:ring-2 focus:ring-[#B4D8F8] focus:border-[#007AAB]',
+                'checked:bg-[#222] checked:border-[#222] checked:text-white',
+                error && 'border-[#FF385C] focus:ring-[#FF385C]',
+                disabled && 'bg-[#F7F7F7] border-[#E0E0E0]',
+                'border-2 border-[#B0B0B0]',
+              )}
+              {...props}
+            />
+            <div className="absolute inset-[2px] border border-[#222] rounded-[2px] pointer-events-none" />
+          </div>
+        ) : (
+          <input
+            ref={inputRef}
+            id={id}
+            type="checkbox"
+            disabled={disabled}
+            className={cn(
+              'peer appearance-none w-5 h-5 rounded-[4px] bg-white transition-all outline-none shadow-sm',
+              'focus:ring-2 focus:ring-[#B4D8F8] focus:border-[#007AAB]',
+              'checked:bg-[#222] checked:border-[#222] checked:text-white',
+              error && 'border-[#FF385C] focus:ring-[#FF385C]',
+              disabled && 'bg-[#F7F7F7] border-[#E0E0E0]',
+              // Style 1: Light gray border
+              variant === 'style1' && 'border border-[#B0B0B0]',
+              // Style 2: Dark gray/black border
+              variant === 'style2' && 'border border-[#222]',
+            )}
+            {...props}
+          />
+        )}
         {/* Checkmark */}
         <span
           className={cn(

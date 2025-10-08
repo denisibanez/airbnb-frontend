@@ -19,6 +19,7 @@ const buttonVariants = cva(
         ghost: "bg-transparent text-black hover:bg-neutral-100 focus:ring-neutral-400",
         link: "bg-transparent text-link underline hover:opacity-80 focus:ring-link",
         error: "bg-error-02 text-white hover:opacity-90 focus:ring-error-02",
+        gradient: "w-full bg-gradient-to-r from-[#EB4A5A] to-[#C13584] text-white font-semibold rounded-xl py-3 text-lg hover:brightness-105 transition-colors shadow",
       },
       size: {
         sm: "h-8 px-3 text-sm",

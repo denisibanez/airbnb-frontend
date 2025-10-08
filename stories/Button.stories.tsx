@@ -19,6 +19,7 @@ export const Outline: Story = { args: { variant: 'outline', children: 'Outline' 
 export const Ghost: Story = { args: { variant: 'ghost', children: 'Ghost' } };
 export const Link: Story = { args: { variant: 'link', children: 'Link' } };
 export const Error: Story = { args: { variant: 'error', children: 'Error' } };
+export const Gradient: Story = { args: { variant: 'gradient', children: 'Gradient' } };
 
 export const Sizes: Story = {
   render: () => (

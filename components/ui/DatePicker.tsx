@@ -132,6 +132,7 @@ export default function DatePicker({
   const [selected, setSelected] = useState<[Date | null, Date | null]>(value ?? [null, null]);
   const [hovered, setHovered] = useState<Date | null>(null);
   const [flex, setFlex] = useState(initialPill);
+  const [isFlexibleMode, setIsFlexibleMode] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -167,6 +168,10 @@ export default function DatePicker({
 
   function handleDayClick(day: Date) {
     if (isUnavailable(day)) return;
+    
+    // Se estiver no modo flexível, não permite seleção manual
+    if (isFlexibleMode) return;
+    
     let next: [Date | null, Date | null];
     if (!selected[0] || (selected[0] && selected[1])) {
       next = [day, null];
@@ -181,6 +186,31 @@ export default function DatePicker({
     }
     setSelected(next);
     onChange?.(next);
+  }
+
+  function handleFlexPillClick(pillIndex: number) {
+    setFlex(pillIndex);
+    
+    if (pillIndex === 0) {
+      // "Datas exatas" - modo livre
+      setIsFlexibleMode(false);
+      setSelected([null, null]);
+      onChange?.([null, null]);
+    } else {
+      // "+ X dias" - seleção automática
+      setIsFlexibleMode(true);
+      const today = new Date();
+      const daysToAdd = pillIndex; // 1, 2, 3, 7 dias
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + daysToAdd);
+      
+      const newSelection: [Date, Date] = [today, endDate];
+      setSelected(newSelection);
+      onChange?.(newSelection);
+      
+      // Ajusta o mês exibido para mostrar a data de início
+      setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+    }
   }
 
   function renderMonth(monthDate: Date) {
@@ -207,6 +237,9 @@ export default function DatePicker({
         if (inRange) right = i - startIdx;
       }
       if (left === -1 || right === -1) return null;
+      
+      // Se for modo flexível, usar cálculo diferente para evitar extrapolação
+      const isFlexibleRange = isFlexibleMode;
       // Checa se o range começa/termina nesta linha
       const isRangeStart = (() => {
         if (!selected[0]) return false;
@@ -229,7 +262,9 @@ export default function DatePicker({
           )}
           style={{
             left: `calc(${left * 14.285714285714286}% + ${left * -0.5}rem)`,
-            right: `calc(${(6-right) * 14.285714285714286}% + ${(6-right) * -0.5}rem)`,
+            right: isFlexibleRange 
+              ? `calc(${(6-right) * 14.285714285714286}% + ${(6-right) * 0.75}rem)`
+              : `calc(${(6-right) * 14.285714285714286}% + ${(6-right) * -0.5}rem)`,
             top: `calc(${rowIdx}*3.25rem)`,
             zIndex: 1,
           }}
@@ -301,11 +336,13 @@ export default function DatePicker({
                   isDisabled && 'text-[#B0B0B0] line-through opacity-100 cursor-not-allowed rounded-full',
                   // Fora do mês
                   isOutMonth && 'text-neutral-300 rounded-full',
+                  // Modo flexível ativo - desabilita interação
+                  isFlexibleMode && !isSelected && !inRange && 'opacity-50 cursor-not-allowed',
                   // Estado default: círculo e hover leve
-                  (!isSelected && !inRange && !isHovered && !isDisabled && !isOutMonth) && 'rounded-full hover:bg-[#222]/5',
+                  (!isSelected && !inRange && !isHovered && !isDisabled && !isOutMonth && !isFlexibleMode) && 'rounded-full hover:bg-[#222]/5',
                 )}
                 onClick={() => handleDayClick(date)}
-                onMouseEnter={() => setHovered(date)}
+                onMouseEnter={() => !isFlexibleMode && setHovered(date)}
                 onMouseLeave={() => setHovered(null)}
                 aria-label={date.toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}
                 disabled={isDisabled}
@@ -563,10 +600,10 @@ export default function DatePicker({
               className={cn(
                 'px-4 py-2 rounded-full border border-[#000000] text-sm font-medium transition w-[auto] h-[38px]',
                 flex === i 
-                  ? 'bg-[#F7F7F7] text-[#222]' 
-                  : 'text-[#717171] hover:bg-[#F7F7F7]'
+                  ? 'bg-[#222] text-white border-[#222]' 
+                  : 'text-[#717171] hover:bg-[#F7F7F7] border-[#000000]'
               )}
-              onClick={() => setFlex(i)}
+              onClick={() => handleFlexPillClick(i)}
             >
               {pill}
             </button>

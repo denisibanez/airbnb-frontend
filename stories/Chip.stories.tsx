@@ -1,38 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Chip, { ChipVariant } from '../components/ui/Chip';
+import Chip from '../components/ui/Chip';
 import { IconsInterfaceHeartFull } from '../components/ui/Icons';
 
 const meta: Meta<typeof Chip> = {
   title: 'Components/Chip',
   component: Chip,
   tags: ['autodocs'],
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: [
-        'default',
-        'outlined',
-        'outlinedDouble',
-        'outlinedSm',
-        'filled',
-        'map',
-        'mapFilled',
-        'mapShadow',
-        'mapFavorite',
-      ],
-    },
-    selected: { control: 'boolean' },
-    iconRight: { control: 'object' },
-    children: { control: 'text' },
-    className: { control: 'text' },
-    onClick: { action: 'clicked' },
-  },
-  args: {
-    variant: 'default',
-    selected: false,
-    children: '1',
-    className: '',
-  },
 };
 export default meta;
 
@@ -42,34 +15,34 @@ export const Playground: Story = {
   args: {},
 };
 
-export const Default: Story = {
-  args: { variant: 'default', children: '1' },
+// Baseado na imagem: 6 estados diferentes
+export const WhiteChip: Story = {
+  render: () => <Chip variant="white" value="$99" />,
 };
-export const Outlined: Story = {
-  args: { variant: 'outlined', children: '1' },
+
+export const WhiteWithBorderChip: Story = {
+  render: () => <Chip variant="whiteWithBorder" value="$99" />,
 };
-export const OutlinedDouble: Story = {
-  args: { variant: 'outlinedDouble', children: '1' },
+
+export const DarkChip: Story = {
+  render: () => <Chip variant="dark" value="$99" />,
 };
-export const OutlinedSm: Story = {
-  args: { variant: 'outlinedSm', children: '1' },
+
+export const LightGrayChip: Story = {
+  render: () => <Chip variant="lightGray" value="$99" />,
 };
-export const Filled: Story = {
-  args: { variant: 'filled', children: '1' },
+
+export const WhiteWithHeartChip: Story = {
+  render: () => (
+    <Chip
+      variant="whiteWithHeart"
+      value="$99"
+      iconRight={<IconsInterfaceHeartFull className="w-4 h-4" fill="#FF385C" />}
+    />
+  ),
 };
-export const Map: Story = {
-  args: { variant: 'map', children: '$99' },
-};
-export const MapFilled: Story = {
-  args: { variant: 'mapFilled', children: '$99', selected: true },
-};
-export const MapShadow: Story = {
-  args: { variant: 'mapShadow', children: '$99' },
-};
-export const MapFavorite: Story = {
-  args: {
-    variant: 'mapFavorite',
-    children: '$99',
-    iconRight: <IconsInterfaceHeartFull className="w-4 h-4 text-[#FF385C]" />,
-  },
+
+// Exemplo com valor customizado
+export const CustomValue: Story = {
+  render: () => <Chip variant="dark" value="$150" />,
 }; 

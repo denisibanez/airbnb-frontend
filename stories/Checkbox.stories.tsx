@@ -12,6 +12,10 @@ const meta: Meta<typeof Checkbox> = {
     error: { control: 'boolean' },
     label: { control: 'text' },
     className: { control: 'text' },
+    variant: { 
+      control: 'select',
+      options: ['style1', 'style2', 'style3']
+    },
     onChange: { action: 'changed' },
   },
   args: {
@@ -31,10 +35,54 @@ export const Playground: Story = {
   args: {},
 };
 
-export const Checked: Story = {
+// Style 1 - Light gray border
+export const Style1Unchecked: Story = {
   args: {
+    variant: 'style1',
+    checked: false,
+    label: 'Style 1 - Unchecked',
+  },
+};
+
+export const Style1Checked: Story = {
+  args: {
+    variant: 'style1',
     checked: true,
-    label: 'Checkbox marcado',
+    label: 'Style 1 - Checked',
+  },
+};
+
+// Style 2 - Dark gray/black border
+export const Style2Unchecked: Story = {
+  args: {
+    variant: 'style2',
+    checked: false,
+    label: 'Style 2 - Unchecked',
+  },
+};
+
+export const Style2Checked: Story = {
+  args: {
+    variant: 'style2',
+    checked: true,
+    label: 'Style 2 - Checked',
+  },
+};
+
+// Style 3 - Double border
+export const Style3Unchecked: Story = {
+  args: {
+    variant: 'style3',
+    checked: false,
+    label: 'Style 3 - Unchecked',
+  },
+};
+
+export const Style3Checked: Story = {
+  args: {
+    variant: 'style3',
+    checked: true,
+    label: 'Style 3 - Checked',
   },
 };
 
@@ -56,11 +104,5 @@ export const Error: Story = {
   args: {
     error: true,
     label: 'Checkbox com erro',
-  },
-};
-
-export const NoLabel: Story = {
-  args: {
-    label: '',
   },
 }; 
