@@ -519,15 +519,15 @@ export default function DatePicker({
         </>
       ) : (
         <div className="flex justify-center mb-6">
-          <div className="flex justify-between items-center p-3 gap-1  bg-[#D9d9d9] rounded-full w-[475px] h-[62px]">
+          <div className="flex justify-between items-center p-1.5 gap-1  bg-[#ebebeb] rounded-full w-[325px] h-[42px]">
             {TABS.map(t => (
               <button
                 key={t.key}
                 className={cn(
-                  'capitalize font-bold px-4 py-2 rounded-full  text-sm transition w-[124px] h-[46px] flex items-center justify-center',
+                  'capitalize font-bold cursor-pointer px-4 py-2 rounded-full  text-sm transition w-[124px] h-[32px] flex items-center justify-center',
                   tab === t.key 
                     ? 'bg-white text-[#222] shadow-sm' 
-                    : 'text-[#717171] hover:bg-white/50'
+                    : 'text-[#222] hover:bg-white/50'
                 )}
                 onClick={() => setTab(t.key as TabKey)}
               >

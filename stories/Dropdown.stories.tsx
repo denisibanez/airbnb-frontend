@@ -6,6 +6,7 @@ import CCicon from '../assets/images/CCicon.png';
 const meta: Meta<typeof Dropdown> = {
   title: 'Components/Dropdown',
   component: Dropdown,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },

@@ -69,7 +69,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
   };
 
-  const handleSeparatorOnMouseLeave = (e: React.MouseEvent<HTMLButtonElement>, value: string, elementTarget: string) => {
+  const handleSeparatorOnMouseLeave = (e: React.MouseEvent<HTMLElement>, value: string, elementTarget: string) => {
     const prevSeparator = e.currentTarget[elementTarget as keyof HTMLElement] as HTMLElement;
     if (prevSeparator) prevSeparator.style.opacity = value;
   };
@@ -105,33 +105,38 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <div className={cn('relative search-bar-container', className)}>
       <div
         className={cn(
-          'flex items-center bg-white rounded-full shadow-lg border border-[#E0E0E0] py-1 h-[64px] w-full max-w-4xl',
+          'flex items-center rounded-full shadow-lg border border-[#Ebebeb] py-1 h-[60px] w-full max-w-4xl transition-all duration-300',
+          isQuemActive ? 'bg-[#dddddd]' : 'bg-white'
         )}
       >
       {/* Onde */}
       <button
         type="button"
-        className="px-6 h-12 flex flex-col cursor-pointer justify-center hover:bg-[#F7F7F7] hover:h-[61px] hover:rounded-4xl transition text-left w-[180px] flex-shrink-0"
+        className={cn(
+          "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[180px] flex-shrink-0",
+          isQuemActive ? "hover:bg-white" : "hover:bg-[#dddddd]"
+        )}
         onClick={handleWhereClick}
         onMouseEnter={(e) => {
-          const nextSeparator = e.currentTarget.nextElementSibling as HTMLElement;
-          if (nextSeparator) nextSeparator.style.opacity = '0';
+          handleSeparatorOnMouseLeave(e, '0', 'nextElementSibling')
         }}
         onMouseLeave={(e) => {
-          const nextSeparator = e.currentTarget.nextElementSibling as HTMLElement;
-          if (nextSeparator) nextSeparator.style.opacity = '1';
+          handleSeparatorOnMouseLeave(e, '1', 'nextElementSibling')
         }}
       >
         <span className="text-xs font-semibold text-[#222] mb-1">Onde</span>
         <span className="text-sm text-[#717171] truncate">{where}</span>
       </button>
       {/* Separador */}
-      <div className="w-px h-8 bg-[#E0E0E0] transition-opacity duration-200" />
+      <div className="w-px h-8 bg-[#Ebebeb] transition-opacity duration-200" />
       
       {/* Check-in */}
       <button
         type="button"
-        className="px-6 h-12 flex flex-col cursor-pointer justify-center hover:bg-[#F7F7F7] hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0"
+        className={cn(
+          "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0",
+          isQuemActive ? "hover:bg-white" : "hover:bg-[#dddddd]"
+        )}
         onClick={handleCheckInClick}
         onMouseEnter={(e) => {
           handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
@@ -146,12 +151,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <span className="text-sm text-[#717171] truncate">{selectedDates[0] ? formatDisplayDate(selectedDates[0]) : checkIn}</span>
       </button>
       {/* Separador */}
-      <div className="w-px h-8 bg-[#E0E0E0] transition-opacity duration-200" />
+      <div className="w-px h-8 bg-[#Ebebeb] transition-opacity duration-200" />
       
       {/* Check-out */}
       <button
         type="button"
-        className="px-6 h-12 flex flex-col cursor-pointer justify-center hover:bg-[#F7F7F7] hover:h-[61px] hover:rounded-4xl  transition text-left w-[140px] flex-shrink-0"
+        className={cn(
+          "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0",
+          isQuemActive ? "hover:bg-white" : "hover:bg-[#dddddd]"
+        )}
         onClick={handleCheckOutClick}
         onMouseEnter={(e) => {
           handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
@@ -166,11 +174,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <span className="text-sm text-[#717171] truncate">{selectedDates[1] ? formatDisplayDate(selectedDates[1]) : checkOut}</span>
       </button>
       {/* Separador */}
-      <div className="w-px h-8 bg-[#E0E0E0] transition-opacity duration-200" />
+      <div className="w-px h-8 bg-[#Ebebeb] transition-opacity duration-200" />
       
       {/* Quem */}
        <div 
-         className={`flex items-center px-2 relative transition-all duration-200 flex-1 ${isQuemHovered ? 'bg-[#F7F7F7] rounded-full h-[61px]' : 'bg-transparent rounded-none'}`}
+         className={cn(
+           "flex items-center px-2 relative transition-all duration-200 flex-1 min-w-0",
+           isQuemActive 
+             ? (isQuemHovered ? 'bg-white rounded-full h-[61px]' : 'bg-transparent rounded-none')
+             : (isQuemHovered ? 'bg-[#dddddd] rounded-full h-[61px]' : 'bg-transparent rounded-none')
+         )}
          onMouseEnter={(e) => {
           handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
            setIsQuemHovered(true);
@@ -182,7 +195,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
        >
          <button
            type="button"
-           className="px-6 h-12 flex flex-col cursor-pointer justify-center hover:bg-[#F7F7F7] hover:h-[61px] hover:rounded-4xl transition text-left flex-1"
+           className={cn(
+             "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left flex-1 min-w-0 overflow-hidden",
+             
+           )}
            onClick={() => {
              setIsQuemActive(true);
              onGuestsClick?.();
@@ -190,15 +206,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
            onBlur={() => setIsQuemActive(false)}
          >
            <span className="text-xs font-semibold text-[#222] mb-1">Quem</span>
-           <span className="text-sm text-[#717171]">{guests}</span>
+           <span className="text-sm text-[#717171] overflow-hidden text-ellipsis block truncate">{guests}</span>
          </button>
 
          <button
              type="button"
              className={cn(
-               "cursor-pointer flex items-center justify-center rounded-full shadow-sm transition-all duration-300 ease-in-out relative z-10 h-12  overflow-hidden",
+               "cursor-pointer flex items-center justify-center rounded-full shadow-sm transition-all duration-300 ease-in-out relative z-10 h-12 overflow-hidden flex-shrink-0",
                isQuemActive 
-                 ? "bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] hover:brightness-110 px-6 gap-2 w-[160px]" 
+                 ? "bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] hover:from-[#FF5A5F] hover:via-[#FF385C] hover:to-[#E61E4D] w-[120px]" 
                  : "bg-[#FF385C] hover:bg-gradient-to-r hover:from-[#E61E4D] hover:via-[#E31C5F] hover:to-[#D70466] hover:brightness-110 w-12 px-0 gap-0"
              )}
              onClick={onSearch}
@@ -207,7 +223,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
              <IconsInterfaceSearch className="w-5 h-5 flex-shrink-0" style={{ fill: 'white' }} />
              <span className={cn(
                "text-white font-semibold text-base whitespace-nowrap transition-all duration-300",
-               isQuemActive ? "opacity-100 max-w-[100px] ml-2" : "opacity-0 max-w-0 ml-0"
+               isQuemActive ? "opacity-100 max-w-[80px] ml-2" : "opacity-0 max-w-0 ml-0"
              )}>
                Pesquisar
              </span>
@@ -217,20 +233,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
       
       {/* DatePicker */}
       {isDatePickerOpen && (
-        <>
-          {/* Overlay para fechar ao clicar fora */}
-          <div 
-            className="fixed inset-0 bg-black/20 z-40"
-            onClick={() => setIsDatePickerOpen(false)}
+        <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50">
+          <DatePicker
+            value={selectedDates}
+            onChange={handleDateChange}
+            language="pt"
           />
-          <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50">
-            <DatePicker
-              value={selectedDates}
-              onChange={handleDateChange}
-              language="pt"
-            />
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
