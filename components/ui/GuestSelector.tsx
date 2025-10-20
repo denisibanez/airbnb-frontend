@@ -10,11 +10,12 @@ export interface GuestSelectorProps {
   };
   onChange?: (value: GuestSelectorProps['value']) => void;
   className?: string;
-  maxGuests?: number; // máximo de adultos+crianças
-  maxInfants?: number; // máximo de bebês
-  maxPets?: number; // máximo de pets
-  allowPets?: boolean; // se false, pets não podem ser adicionados
-  onClose?: () => void; // callback para fechar
+  maxGuests?: number; // maximum of adults+children
+  maxInfants?: number; // maximum of infants
+  maxPets?: number; // maximum of pets
+  allowPets?: boolean; // if false, pets cannot be added
+  mode?: 'experiences' | 'accommodation'; // new prop for different modes
+  onClose?: () => void; // callback to close
 }
 
 const GUESTS = [
@@ -46,14 +47,14 @@ const GUESTS = [
 
 type GuestKey = typeof GUESTS[number]['key'];
 
-export default function GuestSelector({ value, onChange, className, maxGuests = 16, maxInfants = 5, maxPets = 2, allowPets = true, onClose }: GuestSelectorProps) {
+export default function GuestSelector({ value, onChange, className, maxGuests = 16, maxInfants = 5, maxPets = 2, allowPets = true, mode = 'accommodation', onClose }: GuestSelectorProps) {
   const [internal, setInternal] = useState({ adults: 1, children: 0, infants: 0, pets: 0 });
   const guests = value || internal;
   const totalGuests = guests.adults + guests.children;
 
   function update(key: GuestKey, delta: number) {
     const min = GUESTS.find(g => g.key === key)!.min;
-    let next = { ...guests, [key]: Math.max(min, guests[key] + delta) };
+    const next = { ...guests, [key]: Math.max(min, guests[key] + delta) };
     // Limites
     if (key === 'adults' || key === 'children') {
       if (next.adults + next.children > maxGuests) return;
@@ -64,12 +65,17 @@ export default function GuestSelector({ value, onChange, className, maxGuests = 
     onChange?.(next);
   }
 
+  // Filter guests based on mode
+  const availableGuests = mode === 'experiences' 
+    ? GUESTS.filter(g => ['adults', 'children', 'infants'].includes(g.key))
+    : GUESTS;
+
   return (
     <div 
       className={cn('w-[380px] max-w-full rounded-3xl shadow-airbnb-03 border border-neutral-200 bg-white p-6 flex flex-col gap-1', className)}
       onMouseDown={e => e.stopPropagation()}
     >
-      {GUESTS.map(g => {
+      {availableGuests.map(g => {
         // Limites para +
         let plusDisabled = false;
         if (g.key === 'adults' || g.key === 'children') {
@@ -88,14 +94,7 @@ export default function GuestSelector({ value, onChange, className, maxGuests = 
                 {g.label}
               </div>
               <div className="text-sm text-[#717171]">
-                {g.key === 'pets' ? (
-                  <>
-                    <span>Menos de 2 anos</span><br />
-                    <a href="#" className="text-[#222] underline cursor-pointer text-sm">Vai trazer um animal de serviço?</a>
-                  </>
-                ) : (
-                  g.description
-                )}
+                {g.description}
               </div>
             </div>
             <div className="flex items-center gap-3 ml-8">
@@ -137,14 +136,14 @@ export default function GuestSelector({ value, onChange, className, maxGuests = 
         );
       })}
       <div className="mt-4 text-sm text-[#717171] text-left">
-        Este espaço tem um máximo de {maxGuests} hóspedes, não incluindo bebês. {!allowPets && 'Não são permitidos animais de estimação.'}
+        This space has a maximum of {maxGuests} guests, not including infants. {!allowPets && 'Pets are not allowed.'}
       </div>
       <button
         className="mt-6 ml-auto text-base font-medium underline text-[#222] bg-transparent border-0 p-0 cursor-pointer hover:text-black"
         type="button"
         onClick={onClose}
       >
-        Fechar
+        Close
       </button>
     </div>
   );

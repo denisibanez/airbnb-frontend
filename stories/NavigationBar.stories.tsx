@@ -11,6 +11,7 @@ const meta: Meta<typeof NavigationBar> = {
     onBecomeHost: { action: 'becomeHost' },
     onSearchBar: { control: 'object' },
     userProfileImage: { control: 'text' },
+    loading: { control: 'boolean' },
     className: { control: 'text' },
   },
   args: {
@@ -20,6 +21,7 @@ const meta: Meta<typeof NavigationBar> = {
       checkOut: 'Adicionar datas',
       guests: 'Adicionar viajantes',
     },
+    loading: false,
     className: '',
   },
 };
@@ -124,33 +126,74 @@ export const AllUserStates: Story = {
   ),
 };
 
-export const WithDatePicker: Story = {
+export const WithTabSelection: Story = {
   render: () => {
+    const [selectedTab, setSelectedTab] = React.useState<'stays' | 'experiences' | 'services'>('stays');
     const [dates, setDates] = React.useState<[Date | null, Date | null]>([null, null]);
     
     return (
       <div className="min-h-screen bg-gray-50 pb-20">
         <NavigationBar 
+          selectedTab={selectedTab}
+          onTabChange={(tab) => {
+            setSelectedTab(tab);
+            console.log('Tab changed to:', tab);
+          }}
           userProfileImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
           onSearchBar={{
-            where: 'Pesquisar destinos',
-            checkIn: 'Adicionar datas',
-            checkOut: 'Adicionar datas',
-            guests: 'Adicionar viajantes',
+            where: 'Search destinations',
+            checkIn: 'Add dates',
+            checkOut: 'Add dates',
+            guests: 'Add guests',
             onDateChange: (newDates) => {
               setDates(newDates);
-              console.log('Datas selecionadas:', newDates);
+              console.log('Dates selected:', newDates);
+            },
+            onLocationSelect: (location) => {
+              console.log('Location selected:', location);
             },
           }}
         />
-        {dates[0] && dates[1] && (
-          <div className="mt-8 text-center">
-            <p className="text-lg font-semibold">
-              Datas selecionadas: {dates[0].toLocaleDateString('pt-BR')} - {dates[1].toLocaleDateString('pt-BR')}
+        <div className="mt-8 text-center">
+          <p className="text-lg font-semibold text-gray-700">
+            Current tab: <span className="text-[#FF385C]">{selectedTab}</span>
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            SearchBar mode: {selectedTab === 'experiences' || selectedTab === 'services' ? 'experiences' : 'accommodation'}
+          </p>
+          <p className="text-xs text-gray-400 mt-2">
+            Popovers stay open when switching tabs, but selections are cleared
+          </p>
+          {dates[0] && dates[1] && (
+            <p className="text-sm text-gray-600 mt-4">
+              Dates: {dates[0].toLocaleDateString('en-US')} - {dates[1].toLocaleDateString('en-US')}
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   },
+};
+
+export const LoadingState: Story = {
+  args: {
+    loading: true,
+  },
+  render: (args) => (
+    <div className="min-h-screen bg-gray-50">
+      <NavigationBar {...args} />
+      <div className="p-8">
+        <h2 className="text-xl font-semibold mb-4">NavigationBar Loading State</h2>
+        <p className="text-gray-600 mb-4">
+          This example shows the skeleton loading state for the entire NavigationBar component.
+        </p>
+        <div className="bg-white p-4 rounded-lg border">
+          <h3 className="font-semibold mb-2">Loading State</h3>
+          <p className="text-sm text-gray-600">
+            The skeleton includes placeholders for the logo, navigation tabs, user actions, and the SearchBar.
+          </p>
+        </div>
+      </div>
+    </div>
+  ),
 }; 
