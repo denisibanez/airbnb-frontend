@@ -113,6 +113,7 @@ export const WithDatePicker: Story = {
 
 export const ExperiencesMode: Story = {
   render: () => {
+    const [experienceDate, setExperienceDate] = React.useState<Date | null>(null);
     
     return (
       <div className="min-h-screen bg-gray-50 p-20">
@@ -134,11 +135,11 @@ export const ExperiencesMode: Story = {
         </div>
         <div className="mt-8 text-center">
           <p className="text-gray-600">
-            <strong>Experiences Mode:</strong> Only Adults, Children and Infants + Service Selection
+            <strong>Experiences Mode:</strong> Single "Add dates" field with ExperienceDatePicker
           </p>
           <ul className="text-sm text-gray-500 mt-4 space-y-1">
             <li>• <strong>Where</strong>: Search destinations</li>
-            <li>• <strong>Check-in/Check-out</strong>: Opens DatePicker</li>
+            <li>• <strong>Dates</strong>: Single field that opens ExperienceDatePicker with quick options</li>
             <li>• <strong>Who</strong>: Opens ServiceSelector (Photography, Chefs, Massage, etc.)</li>
             <li>• <strong>Services</strong>: Photography, Chefs, Massage, etc.</li>
           </ul>
@@ -232,4 +233,84 @@ export const WithInitialValues: Story = {
       </div>
     </div>
   ),
+};
+
+export const ExperienceDatePickerDemo: Story = {
+  render: () => {
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+    
+    return (
+      <div className="min-h-screen bg-gray-50 p-20">
+        <div className="flex justify-center">
+          <SearchBar 
+            mode="experiences"
+            where="Search destinations"
+            onSearch={() => {
+              console.log('Search experiences with date:', selectedDate);
+            }}
+          />
+        </div>
+        {selectedDate && (
+          <div className="mt-8 text-center">
+            <p className="text-lg font-semibold text-gray-700">
+              Selected experience date: {selectedDate.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </p>
+          </div>
+        )}
+        <div className="mt-8 text-center">
+          <p className="text-gray-600">
+            <strong>ExperienceDatePicker Features:</strong>
+          </p>
+          <ul className="text-sm text-gray-500 mt-4 space-y-1">
+            <li>• <strong>Quick Options</strong>: Today, Tomorrow, This weekend</li>
+            <li>• <strong>Calendar View</strong>: Single month with navigation</li>
+            <li>• <strong>Visual Design</strong>: Matches the reference image exactly</li>
+            <li>• <strong>Single Date Selection</strong>: Perfect for experiences</li>
+            <li>• <strong>Months Selector</strong>: Circular range selector for duration</li>
+          </ul>
+        </div>
+      </div>
+    );
+  },
+};
+
+export const MonthsSelectorDemo: Story = {
+  args: {
+    mode: 'experiences',
+    showServiceSelector: false,
+  },
+  render: (args) => {
+    const [showMonths, setShowMonths] = React.useState(false);
+    
+    return (
+      <div className="p-8">
+        <div className="mb-4">
+          <button
+            onClick={() => setShowMonths(!showMonths)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Toggle Months Selector: {showMonths ? 'ON' : 'OFF'}
+          </button>
+        </div>
+        <SearchBar {...args} />
+        <div className="mt-8 text-center">
+          <p className="text-gray-600">
+            <strong>MonthsRangeSelector Features:</strong>
+          </p>
+          <ul className="text-sm text-gray-500 mt-4 space-y-1">
+            <li>• <strong>Circular Slider</strong>: Interactive range selection (1-12 months)</li>
+            <li>• <strong>Tab Navigation</strong>: Datas, Meses, Flexível</li>
+            <li>• <strong>Visual Feedback</strong>: Pink arc shows selected range</li>
+            <li>• <strong>Date Calculation</strong>: Automatically calculates date ranges</li>
+            <li>• <strong>Responsive Design</strong>: Works on all screen sizes</li>
+          </ul>
+        </div>
+      </div>
+    );
+  },
 }; 

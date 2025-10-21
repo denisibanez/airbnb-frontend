@@ -21,7 +21,7 @@ export interface ServiceSelectorProps {
 const SERVICES = [
   {
     id: 'photography',
-    label: 'Serviços de fotografia',
+    label: 'Photography services',
     icon: <IconsOutlineCamera className="w-6 h-6" />
   },
   {
@@ -31,32 +31,32 @@ const SERVICES = [
   },
   {
     id: 'ready-food',
-    label: 'Comida pronta',
+    label: 'Ready-made food',
     icon: <IconsGeneralUtensils className="w-6 h-6" />
   },
   {
     id: 'massage',
-    label: 'Massagem',
+    label: 'Massage',
     icon: <IconsOutlineCleaning className="w-6 h-6" />
   },
   {
     id: 'training',
-    label: 'Serviços de treino',
+    label: 'Training services',
     icon: <IconsGeneralClock className="w-6 h-6" />
   },
   {
     id: 'makeup',
-    label: 'Maquilhagem',
+    label: 'Makeup',
     icon: <IconsGeneralStar className="w-6 h-6" />
   },
   {
     id: 'hair',
-    label: 'Cabelo',
+    label: 'Hair',
     icon: <IconsOutlineHairDryer className="w-6 h-6" />
   },
   {
     id: 'spa',
-    label: 'Tratamentos de spa',
+    label: 'Spa treatments',
     icon: <IconsOutlineFitness className="w-6 h-6" />
   },
   {

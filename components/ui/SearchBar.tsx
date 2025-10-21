@@ -3,6 +3,7 @@ import { cn } from '../../lib/utils';
 import { IconsInterfaceSearch } from './Icons';
 import IconsInterfaceClose from './Icons/IconsInterfaceClose';
 import DatePicker from './DatePicker';
+import ExperienceDatePicker from './ExperienceDatePicker';
 import GuestSelector from './GuestSelector';
 import ServiceSelector from './ServiceSelector';
 import PlacesPopover from './PlacesPopover';
@@ -52,13 +53,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [isQuemHovered, setIsQuemHovered] = useState(false);
   const [isQuemActive, setIsQuemActive] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isExperienceDatePickerOpen, setIsExperienceDatePickerOpen] = useState(false);
   const [isGuestSelectorOpen, setIsGuestSelectorOpen] = useState(false);
   const [isPlacesPopoverOpen, setIsPlacesPopoverOpen] = useState(false);
   const [selectedDates, setSelectedDates] = useState<[Date | null, Date | null]>(initialDates || [null, null]);
+  const [selectedExperienceDate, setSelectedExperienceDate] = useState<Date | null>(null);
+  const [selectedExperienceRange, setSelectedExperienceRange] = useState<[Date | null, Date | null]>([null, null]);
   const [guestCounts, setGuestCounts] = useState(initialGuestCounts || { adults: 1, children: 0, infants: 0, pets: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(initialLocation || '');
-  const [activeField, setActiveField] = useState<'where' | 'checkin' | 'checkout' | 'guests' | null>(null);
+  const [activeField, setActiveField] = useState<'where' | 'checkin' | 'checkout' | 'dates' | 'guests' | null>(null);
   const [selectedService, setSelectedService] = useState<string>(initialServices || '');
   
   // Track if it's the first render to avoid clearing on mount
@@ -115,6 +119,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     
     // Reset dates
     setSelectedDates([null, null]);
+    setSelectedExperienceDate(null);
+    setSelectedExperienceRange([null, null]);
     
     // Reset location
     setSelectedLocation('');
@@ -126,11 +132,29 @@ const SearchBar: React.FC<SearchBarProps> = ({
     // Reset services
       setSelectedService('');
     
+    // Switch calendar type when changing modes - keep popover open
+    if (mode === 'experiences' || showServiceSelector) {
+      // If any date picker is open, switch to ExperienceDatePicker
+      if (isDatePickerOpen || isExperienceDatePickerOpen) {
+        setIsDatePickerOpen(false);
+        setIsExperienceDatePickerOpen(true);
+        setActiveField('dates');
+      }
+    } else {
+      // If any date picker is open, switch to DatePicker (stays mode)
+      if (isDatePickerOpen || isExperienceDatePickerOpen) {
+        setIsExperienceDatePickerOpen(false);
+        setIsDatePickerOpen(true);
+        setActiveField('checkin');
+      }
+    }
+    
     // Note: We DON'T close popovers here, they stay open
   }, [mode, showServiceSelector]);
   
   const handleCheckInClick = () => {
     setIsDatePickerOpen(true);
+    setIsExperienceDatePickerOpen(false);
     setIsGuestSelectorOpen(false);
     setIsPlacesPopoverOpen(false);
     setIsQuemActive(true);
@@ -140,11 +164,21 @@ const SearchBar: React.FC<SearchBarProps> = ({
   
   const handleCheckOutClick = () => {
     setIsDatePickerOpen(true);
+    setIsExperienceDatePickerOpen(false);
     setIsGuestSelectorOpen(false);
     setIsPlacesPopoverOpen(false);
     setIsQuemActive(true);
     setActiveField('checkout');
     onCheckOutClick?.();
+  };
+
+  const handleDatesClick = () => {
+    setIsExperienceDatePickerOpen(true);
+    setIsDatePickerOpen(false);
+    setIsGuestSelectorOpen(false);
+    setIsPlacesPopoverOpen(false);
+    setIsQuemActive(true);
+    setActiveField('dates');
   };
   
   const handleLocationSearch = (query: string) => {
@@ -185,20 +219,49 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setIsQuemActive(false);
     setActiveField(null);
   };
+
+  const handleClearDates = () => {
+    setSelectedDates([null, null]);
+    setSelectedExperienceDate(null);
+    setSelectedExperienceRange([null, null]);
+    // Focus back on check-in with transition
+    setTimeout(() => {
+      setActiveField('checkin');
+    }, 150);
+  };
   
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     setSelectedDates(dates);
     onDateChange?.(dates);
     
-    // Automatically close when both dates are selected
-    if (dates[0] && dates[1]) {
+    // When check-in is selected, automatically focus on checkout with transition
+    if (dates[0] && !dates[1]) {
       setTimeout(() => {
-        setIsDatePickerOpen(false);
-      }, 300);
+        setActiveField('checkout');
+      }, 150);
     }
   };
+
+  const handleExperienceDateChange = (date: Date | null, range?: [Date | null, Date | null]) => {
+    console.log('ExperienceDatePicker onChange:', date, range);
+    setSelectedExperienceDate(date);
+    if (range) {
+      setSelectedExperienceRange(range);
+    }
+  };
+
   
   const formatDisplayDate = (date: Date | null) => {
+    if (!date) return 'Add dates';
+    return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+  };
+
+  const formatExperienceDate = (date: Date | null, range?: [Date | null, Date | null]) => {
+    if (range && range[0] && range[1]) {
+      const start = range[0].toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+      const end = range[1].toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+      return `${start} - ${end}`;
+    }
     if (!date) return 'Add dates';
     return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
   };
@@ -268,6 +331,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsDatePickerOpen(false);
+        setIsExperienceDatePickerOpen(false);
         setIsGuestSelectorOpen(false);
         setIsPlacesPopoverOpen(false);
         setIsQuemActive(false);
@@ -277,6 +341,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      
       // Don't close if clicking on navigation buttons (tab switching)
       if (target.closest('button') && target.textContent && 
           (target.textContent.includes('Stays') || 
@@ -284,22 +349,29 @@ const SearchBar: React.FC<SearchBarProps> = ({
            target.textContent.includes('Services'))) {
         return;
       }
+      // Don't close if clicking on navigation bar area
+      if (target.closest('header') || target.closest('[role="tablist"]')) {
+        return;
+      }
+      // Don't close if clicking inside MonthsRangeSelector or DatePicker
+      if (target.closest('[data-months-selector]') || target.closest('[data-date-picker]')) {
+        return;
+      }
       // Se clicar fora do search bar, desativa o botão
       if (!target.closest('.search-bar-container')) {
         setIsQuemActive(false);
         setIsDatePickerOpen(false);
+        setIsExperienceDatePickerOpen(false);
         setIsGuestSelectorOpen(false);
         setIsPlacesPopoverOpen(false);
         setActiveField(null);
       }
     };
     
-    if (isDatePickerOpen || isGuestSelectorOpen || isPlacesPopoverOpen || isQuemActive) {
-      console.log('Adicionando listeners, estados:', { isDatePickerOpen, isGuestSelectorOpen, isPlacesPopoverOpen, isQuemActive });
+    if (isDatePickerOpen || isExperienceDatePickerOpen || isGuestSelectorOpen || isPlacesPopoverOpen || isQuemActive) {
       document.addEventListener('keydown', handleEsc);
       // Adiciona listener com um pequeno delay para evitar fechamento imediato
       const timer = setTimeout(() => {
-        console.log('Adicionando listener de clique externo (após 100ms)');
         document.addEventListener('mousedown', handleClickOutside);
       }, 100);
       
@@ -309,7 +381,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isDatePickerOpen, isGuestSelectorOpen, isPlacesPopoverOpen, isQuemActive]);
+  }, [isDatePickerOpen, isExperienceDatePickerOpen, isGuestSelectorOpen, isPlacesPopoverOpen, isQuemActive]);
   
   // Show skeleton if loading
   if (loading) {
@@ -341,6 +413,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             onFocus={() => {
               setIsPlacesPopoverOpen(true);
               setIsDatePickerOpen(false);
+              setIsExperienceDatePickerOpen(false);
               setIsGuestSelectorOpen(false);
               setIsQuemActive(true);
               setActiveField('where');
@@ -361,55 +434,103 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {/* Separador */}
       <div className="w-px h-8 bg-[#dddddd] transition-opacity duration-200" />
       
-      {/* Check-in */}
-      <button
-        type="button"
-        className={cn(
-          "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0",
-          activeField === 'checkin' && isQuemActive 
-            ? "bg-white h-[61px] rounded-full"
-            : "hover:bg-[#dddddd] rounded-full"
-        )}
-        onClick={handleCheckInClick}
-        onMouseEnter={(e) => {
-          handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
-          handleSeparatorOnMouseLeave(e, '0', 'nextElementSibling')
-        }}
-        onMouseLeave={(e) => {
-          handleSeparatorOnMouseLeave(e, '1', 'previousElementSibling')
-          handleSeparatorOnMouseLeave(e, '1', 'nextElementSibling')
-        }}
-      >
-        <span className="text-xs font-semibold text-[#222] mb-1">Check-in</span>
-        <span className="text-sm text-[#717171] truncate">{selectedDates[0] ? formatDisplayDate(selectedDates[0]) : checkIn}</span>
-      </button>
-      {/* Separador */}
-      <div className="w-px h-8 bg-[#dddddd] transition-opacity duration-200" />
-      
-      {/* Check-out */}
-      <button
-        type="button"
-        className={cn(
-          "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0",
-          activeField === 'checkout' && isQuemActive 
-            ? "bg-white h-[61px] rounded-full"
-            : "rounded-full hover:bg-[#dddddd]"
-        )}
-        onClick={handleCheckOutClick}
-        onMouseEnter={(e) => {
-          handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
-          handleSeparatorOnMouseLeave(e, '0', 'nextElementSibling')
-        }}
-        onMouseLeave={(e) => {
-          handleSeparatorOnMouseLeave(e, '1', 'previousElementSibling')
-          handleSeparatorOnMouseLeave(e, '1', 'nextElementSibling')
-        }}
-      >
-        <span className="text-xs font-semibold text-[#222] mb-1">Check-out</span>
-        <span className="text-sm text-[#717171] truncate">{selectedDates[1] ? formatDisplayDate(selectedDates[1]) : checkOut}</span>
-      </button>
-      {/* Separador */}
-      <div className="w-px h-8 bg-[#dddddd] transition-opacity duration-200" />
+      {/* Conditional rendering based on mode */}
+      {mode === 'experiences' ? (
+        <>
+          {/* Single Dates field for experiences/services */}
+          <div className="relative w-[260px] flex-shrink-0">
+            <button
+              type="button"
+              className={cn(
+                "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-full",
+                activeField === 'dates' && isQuemActive
+                  ? "bg-white h-[61px] rounded-full"
+                  : "hover:bg-[#dddddd] rounded-full"
+              )}
+              onClick={handleDatesClick}
+              onMouseEnter={(e) => {
+                handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
+                handleSeparatorOnMouseLeave(e, '0', 'nextElementSibling')
+              }}
+              onMouseLeave={(e) => {
+                handleSeparatorOnMouseLeave(e, '1', 'previousElementSibling')
+                handleSeparatorOnMouseLeave(e, '1', 'nextElementSibling')
+              }}
+            >
+              <span className="text-xs font-semibold text-[#222] mb-1">Dates</span>
+              <span className="text-sm text-[#717171] truncate">{formatExperienceDate(selectedExperienceDate, selectedExperienceRange)}</span>
+            </button>
+          </div>
+          {/* Separador */}
+          <div className="w-px h-8 bg-[#dddddd] transition-opacity duration-200" />
+        </>
+      ) : (
+        <>
+          {/* Check-in */}
+          <button
+            type="button"
+            className={cn(
+              "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0",
+              activeField === 'checkin' && isQuemActive 
+                ? "bg-white h-[61px] rounded-full"
+                : "hover:bg-[#dddddd] rounded-full"
+            )}
+            onClick={handleCheckInClick}
+            onMouseEnter={(e) => {
+              handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
+              handleSeparatorOnMouseLeave(e, '0', 'nextElementSibling')
+            }}
+            onMouseLeave={(e) => {
+              handleSeparatorOnMouseLeave(e, '1', 'previousElementSibling')
+              handleSeparatorOnMouseLeave(e, '1', 'nextElementSibling')
+            }}
+          >
+            <span className="text-xs font-semibold text-[#222] mb-1">Check-in</span>
+            <span className="text-sm text-[#717171] truncate">{selectedDates[0] ? formatDisplayDate(selectedDates[0]) : checkIn}</span>
+          </button>
+          {/* Separador */}
+          <div className="w-px h-8 bg-[#dddddd] transition-opacity duration-200" />
+          
+          {/* Check-out */}
+          <div className="relative">
+            <button
+              type="button"
+              className={cn(
+                "px-6 h-12 flex flex-col cursor-pointer justify-center hover:h-[61px] hover:rounded-4xl transition text-left w-[140px] flex-shrink-0",
+                activeField === 'checkout' && isQuemActive 
+                  ? "bg-white h-[61px] rounded-full"
+                  : "rounded-full hover:bg-[#dddddd]"
+              )}
+              onClick={handleCheckOutClick}
+              onMouseEnter={(e) => {
+                handleSeparatorOnMouseLeave(e, '0', 'previousElementSibling')
+                handleSeparatorOnMouseLeave(e, '0', 'nextElementSibling')
+              }}
+              onMouseLeave={(e) => {
+                handleSeparatorOnMouseLeave(e, '1', 'previousElementSibling')
+                handleSeparatorOnMouseLeave(e, '1', 'nextElementSibling')
+              }}
+            >
+              <span className="text-xs font-semibold text-[#222] mb-1">Check-out</span>
+              <span className="text-sm text-[#717171] truncate">{selectedDates[1] ? formatDisplayDate(selectedDates[1]) : checkOut}</span>
+            </button>
+            {selectedDates[1] && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClearDates();
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors z-10"
+                aria-label="Clear dates"
+              >
+                <IconsInterfaceClose className="w-4 h-4 cursor-pointer" />
+              </button>
+            )}
+          </div>
+          {/* Separador */}
+          <div className="w-px h-8 bg-[#dddddd] transition-opacity duration-200" />
+        </>
+      )}
       
       {/* Quem */}
        <div 
@@ -442,6 +563,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               console.log('Clicou em Quem, estado atual:', isGuestSelectorOpen);
               setIsGuestSelectorOpen(!isGuestSelectorOpen);
               setIsDatePickerOpen(false);
+              setIsExperienceDatePickerOpen(false);
               setIsPlacesPopoverOpen(false);
               setIsQuemActive(true);
               setActiveField('guests');
@@ -497,6 +619,22 @@ const SearchBar: React.FC<SearchBarProps> = ({
             value={selectedDates}
             onChange={handleDateChange}
             language="en"
+          />
+        </div>
+      )}
+
+      {/* ExperienceDatePicker */}
+      {isExperienceDatePickerOpen && (
+        <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50">
+          <ExperienceDatePicker
+            value={selectedExperienceDate}
+            onChange={handleExperienceDateChange}
+            language="en"
+            onClose={() => {
+              setIsExperienceDatePickerOpen(false);
+              setIsQuemActive(false);
+              setActiveField(null);
+            }}
           />
         </div>
       )}

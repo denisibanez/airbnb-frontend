@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '../../lib/utils';
 import TextField from './TextField';
+import MonthsRangeSelector from './MonthsRangeSelector';
 
 const TRANSLATIONS = {
   pt: {
@@ -133,6 +134,7 @@ export default function DatePicker({
   const [hovered, setHovered] = useState<Date | null>(null);
   const [flex, setFlex] = useState(initialPill);
   const [isFlexibleMode, setIsFlexibleMode] = useState(false);
+  const [selectedMonths, setSelectedMonths] = useState(1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -164,6 +166,16 @@ export default function DatePicker({
       if (unavailableDates.some(u => isSameDay(u, d))) return false;
     }
     return true;
+  }
+
+  function handleMonthsChange(months: number) {
+    setSelectedMonths(months);
+    const startDate = new Date();
+    const endDate = new Date();
+    // Add the exact number of months
+    endDate.setMonth(endDate.getMonth() + months);
+    setSelected([startDate, endDate]);
+    onChange?.([startDate, endDate]);
   }
 
   function handleDayClick(day: Date) {
@@ -394,6 +406,8 @@ export default function DatePicker({
   return (
     <div
       ref={wrapperRef}
+      data-date-picker
+      onMouseDown={e => e.stopPropagation()}
       className={cn(
         'bg-white rounded-3xl shadow-airbnb-03 border border-neutral-200',
         variant === 'dropdown' ? 'w-[720px] px-8 py-10' : 'w-[842px] max-w-full p-8',
@@ -531,7 +545,9 @@ export default function DatePicker({
                 )}
                 onClick={() => setTab(t.key as TabKey)}
               >
-                {t?.tabs?.[t.key as keyof typeof t.tabs] || t.key}
+                {t.key === 'dates' ? (language === 'pt' ? 'Datas' : 'Dates') :
+                 t.key === 'months' ? (language === 'pt' ? 'Meses' : 'Months') :
+                 t.key === 'flexible' ? (language === 'pt' ? 'Flexível' : 'Flexible') : t.key}
               </button>
             ))}
           </div>
@@ -611,8 +627,14 @@ export default function DatePicker({
         </div>
       )}
       {variant !== 'dropdown' && tab === 'months' && (
-        <div className="text-center text-neutral-500 py-12">
-          {language === 'pt' ? 'Seletor de meses (em breve)' : 'Months picker (coming soon)'}
+        <div data-months-selector>
+          <MonthsRangeSelector
+            value={selectedMonths}
+            onChange={handleMonthsChange}
+            language={language}
+            onClose={onRequestClose}
+            className="w-full"
+          />
         </div>
       )}
       {variant !== 'dropdown' && tab === 'flexible' && (
